@@ -42,17 +42,17 @@ The goal of this PoC is to demonstrate that without a policy, full URLs (includi
     Change referrer mode with: REFERRER=NO_REFERRER node server.js
     ```
     
-    ![referrer-policy-1a.png](/images/referrer-policy-1a.png)
+    ![referrer-policy-1a.png](images/referrer-policy-1a.png)
     
     On the same-origin link (`leak.html`) the full `secret` should be leaked:
     
-    ![referrer-policy-1b.png](headers/referrer-policy/images/referrer-policy-1b.png)
+    ![referrer-policy-1b.png](images/referrer-policy-1b.png)
     
     However, on the cross-origin link (`example.html`) only the origin is present. This happens because `strict-origin-when-cross-origin` is [the default value when no policy is specified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy#strict-origin-when-cross-origin_2) according to MDN’s documentation:
     
-    ![referrer-policy-1c.png](headers/referrer-policy/images/referrer-policy-1c.png)
+    ![referrer-policy-1c.png](images/referrer-policy-1c.png)
     
-    ![referrer-policy-1d.png](headers/referrer-policy/images/referrer-policy-1d.png)
+    ![referrer-policy-1d.png](images/referrer-policy-1d.png)
     
 2. We can confirm the above default behavior by restarting the server with the target header explicitly set to `strict-origin-when-cross-origin`: 
     
