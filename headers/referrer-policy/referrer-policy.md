@@ -67,15 +67,15 @@ The goal of this PoC is to demonstrate that without a policy, full URLs (includi
     Change referrer mode with: REFERRER=NO_REFERRER node server.js
     ```
     
-    ![referrer-policy2.png](attachment:c78c5f8d-6ac1-44d1-9b85-aa0cb199aa2e:referrer-policy2.png)
+    ![referrer-policy-2a.png](images/referrer-policy-2a.png)
     
     As before, the secret will be leaked on same-origin request (`leak.html`):
     
-    ![referrer-policy2a.png](attachment:71a721b3-dc88-4716-ba9b-3911da6939b9:referrer-policy2a.png)
+    ![referrer-policy-2b.png](images/referrer-policy-2b.png)
     
     But not on cross-origin requests (`example.com`):
     
-    ![referrer-policy2b.png](attachment:e2e6eee2-96b2-48f3-aca3-5cb35b24736d:referrer-policy2b.png)
+    ![referrer-policy-2c.png](images/referrer-policy-2c.png)
     
 3. Next, restart the server and set the permissive value of `no_referrer_when_downgrade`:
     
@@ -90,13 +90,13 @@ The goal of this PoC is to demonstrate that without a policy, full URLs (includi
     Change referrer mode with: REFERRER=NO_REFERRER node server.js
     ```
     
-    ![referrer-policy3a.png](attachment:44728782-c093-4519-b618-ab0df410d7d9:referrer-policy3a.png)
+    ![referrer-policy-3a.png](images/referrer-policy-3a.png)
     
     The `secret` should leak in both the same-origin (`leak.html`) and cross-origin (`example.com`) requests:
     
-    ![referrer-policy3b.png](attachment:df06e664-f206-45bc-91c1-dc590c8cad7a:referrer-policy3b.png)
+    ![referrer-policy-3b.png](images/referrer-policy-3b.png)
     
-    ![referrer-policy3c.png](attachment:abdc1518-ff97-4479-a782-39e1b72dbd26:referrer-policy3c.png)
+    ![referrer-policy-3c.png](images/referrer-policy-3c.png)
     
 
 5. Finally, restart the server and set the header value to `no-referrer`:
@@ -114,6 +114,10 @@ Referer received: (none)
 Referer received: (none)
 ```
 
-![referrer-policy4.png](attachment:d4ca80f4-2d45-4889-9ed1-2c58b97f57cd:referrer-policy4.png)
+![referrer-policy-4a.png](images/referrer-policy-4a.png)
 
 The header should not exist at all in both the same-origin (`leak.html`) and cross-origin requests (`example.com`):
+
+![referrer-policy-4b.png](images/referrer-policy-4b.png)
+
+![referrer-policy-4c.png](images/referrer-policy-4c.png)
