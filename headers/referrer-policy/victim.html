@@ -1,13 +1,25 @@
 <!doctype html>
 <html>
+  <head><meta charset="utf-8"><title>Victim - Referrer PoC</title></head>
   <body>
     <h2>Victim page</h2>
 
-    <a href="/leak.html">Go to internal page</a>
-    <br><br>
+    <p>
+      Secret in URL (visible only in address bar): <strong id="secret"></strong>
+    </p>
 
-    <a href="https://example.com/" target="_blank">
-      External link (referer will leak)
-    </a>
+    <a href="/poc/referrer-policy/leak.html">Same-origin link (check server log)</a>
+    <br><br>
+    <a href="https://example.com/" target="_blank">External link (cross-origin)</a>
+
+    <script>
+      // show secret query value
+      function getQueryParam(name) {
+        const re = new RegExp('[?&]' + name + '=([^&]*)');
+        const m = (location.search || '').match(re);
+        return m ? decodeURIComponent(m[1]) : '';
+      }
+      document.getElementById('secret').textContent = getQueryParam('secret') || '(none)';
+    </script>
   </body>
 </html>

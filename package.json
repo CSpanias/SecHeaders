@@ -1,0 +1,16 @@
+{
+  "name": "SecHeaders",
+  "version": "0.1.0",
+  "description": "Showcase and PoCs for HTTP security headers (Referrer-Policy demo integrated).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start-dev": "DEBUG=secheaders node server.js"
+  },
+  "keywords": ["security","headers","referrer-policy","poc"],
+  "author": "You",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

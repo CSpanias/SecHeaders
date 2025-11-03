@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Referrer-Policy — SecHeaders</title>
+    <style>
+      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; max-width:900px; margin:30px auto; line-height:1.5; padding:0 18px; }
+      pre { background:#f6f8fa; padding:10px; border-radius:6px; overflow:auto; }
+      table { border-collapse: collapse; width:100%; }
+      th, td { border:1px solid #ddd; padding:8px; text-align:left; }
+      th { background:#f2f2f2; }
+      .ok { color:green; font-weight:bold; }
+    </style>
+  </head>
+  <body>
+    <a href="/">← Back</a>
+    <h1>Referrer-Policy</h1>
+
+    <h2>Purpose</h2>
+    <p><code>Referrer-Policy</code> controls how much information the browser sends in the <code>Referer</code> HTTP header when navigating from one page to another (links, forms, images, scripts, redirects, etc.). Without a strict policy, URLs — including <strong>query parameters that may contain sensitive data</strong> — can be leaked to third-party websites.</p>
+
+    <p><strong>Example:</strong> a user visits <code>https://example.com/account?token=abcd1234</code> and clicks a link to <code>https://attacker.com/collect</code>. If the referrer is overly permissive, the browser may send <code>Referer: https://example.com/account?token=abcd1234</code>, leaking the token.</p>
+
+    <h2>Values</h2>
+    <table>
+      <tr><th>Value</th><th>Behavior</th></tr>
+      <tr><td><code>no-referrer</code></td><td>Sends <strong>no</strong> Referer header, ever.</td></tr>
+      <tr><td><code>same-origin</code></td><td>Sends full referrer <em>only</em> to same origin; strips completely on cross-origin.</td></tr>
+      <tr><td><code>strict-origin</code></td><td>Sends only origin (<code>https://example.com</code>) to HTTPS sites; sends nothing to HTTP.</td></tr>
+      <tr><td><code>strict-origin-when-cross-origin</code> <span class="ok">✅ Recommended</span></td><td>Sends full URL for same-origin, origin only for cross-origin (and nothing on HTTPS → HTTP downgrade).</td></tr>
+      <tr><td><code>no-referrer-when-downgrade</code></td><td>Sends full URL except when going from HTTPS → HTTP. Not privacy-friendly.</td></tr>
+    </table>
+
+    <h2>PoC / Demo</h2>
+    <p>This server includes a small PoC. The PoC pages are served under <code>/poc/referrer-policy</code>.</p>
+    <ul>
+      <li><a href="/poc/referrer-policy/victim.html?secret=LEAKME">Victim page (with secret in query)</a> — click the links to observe Referer behavior.</li>
+      <li><a href="/poc/referrer-policy/leak.html">Leak endpoint</a> — this page logs the Referer header to the server console.</li>
+    </ul>
+
+    <h3>Toggle mode</h3>
+    <p>You can toggle the Referrer-Policy for the PoC either globally via environment variable, e.g.:</p>
+    <pre>REFERRER=STRICT npm start</pre>
+    <p>Or per-request via <code>?mode=</code> on PoC URLs. Valid values: <code>NONE</code>, <code>STRICT</code>, <code>NO_REFERRER</code>, <code>NO_REFERRER_WHEN_DOWNGRADE</code>.</p>
+
+    <h2>Try it locally</h2>
+    <pre>
+# install deps
+npm install
+
+# run with no header (vulnerable)
+REFERRER=NONE npm start
+
+# run with strict default
+REFERRER=STRICT npm start
+
+# or set mode per request
+# example: victim page with strict header
+http://localhost:3000/poc/referrer-policy/victim.html?mode=STRICT&amp;secret=LEAKME
+    </pre>
+
+    <h2>Notes</h2>
+    <ul>
+      <li>Browsers historically used different defaults; MDN documents that many browsers implement <code>strict-origin-when-cross-origin</code> as the default in recent versions.</li>
+      <li>Test both same-origin and cross-origin navigation to observe differences.</li>
+    </ul>
+  </body>
+</html>
