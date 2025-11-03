@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Victim — HSTS demo</title>
+  <style>
+    body{font-family:Arial;margin:20px}
+    .box{width:800px;border:1px solid #ddd;padding:20px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>HSTS demo</h2>
+    <p>This HTTPS host can send the <code>Strict-Transport-Security</code> header. When your browser receives the header it will upgrade future <code>http://</code> requests to <code>https://</code> for the host.</p>
+
+    <ul>
+      <li><b>Visit (HTTPS):</b> <code>https://example.test/</code></li>
+      <li><b>Then visit (HTTP):</b> <code>http://example.test/</code> — the browser should automatically use HTTPS instead (URL will change or connection will be upgraded).</li>
+    </ul>
+
+    <p>Use <code>curl -I https://example.test/</code> to inspect headers (curl won’t enforce HSTS; browsers do).</p>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Victim — XSS demo (demo-only)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:Arial;margin:20px}
+    .box{width:800px;border:1px solid #ddd;padding:20px}
+    input{width:60%;padding:6px}
+    .note{color:#666;margin-top:12px}
+    #echo{padding:12px;border:1px dashed #ccc;background:#fff}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Reflected XSS demo (unsafe on purpose)</h2>
+    <p>Provide a <code>name</code> query parameter; the page will echo it unsafely for demonstration.</p>
+
+    <p>Example attack payload (paste into address bar):<br>
+      <code>?name=&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+    </p>
+
+    <p>
+      Name: <input id="q" value="">
+      <button id="go">Apply</button>
+    </p>
+
+    <div class="note">This page intentionally echoes the parameter directly into the DOM for demo purposes only.</div>
+
+    <hr>
+    <h3>Echo (vulnerable sink)</h3>
+    <div id="echo">(reflected output will appear here)</div>
+  </div>
+
+  <script>
+    // ----------------------------
+    // Demo-only: unsafe reflection + forced script execution
+    // ----------------------------
+    // WARNING: This is intentionally unsafe and only for teaching.
+    // Never use this pattern in production.
+
+    function getParam(name) {
+      const s = new URLSearchParams(location.search);
+      return s.get(name) || '';
+    }
+
+    function executeInlineScriptsFromString(htmlString) {
+      // Find script blocks and execute them by creating real script nodes.
+      try {
+        // Correct regex to capture script contents
+        const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+        let match;
+        while ((match = scriptRegex.exec(htmlString)) !== null) {
+          const code = match[1];
+          const s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.text = code;
+          document.body.appendChild(s); // executes immediately
+          // remove after a short time to keep DOM clean
+          setTimeout(() => { try { document.body.removeChild(s); } catch(e){} }, 1000);
+        }
+      } catch (e) {
+        console.error('script-exec helper failed', e);
+      }
+    }
+
+    function render() {
+      const v = getParam('name');
+      document.getElementById('q').value = v;
+
+      // UNSAFE: insert raw HTML into sink (for demo only)
+      const echo = document.getElementById('echo');
+      echo.innerHTML = v;
+
+      // DEMO: force execution of any <script> blocks found in v
+      executeInlineScriptsFromString(v);
+    }
+
+    document.getElementById('go').addEventListener('click', () => {
+      const v = document.getElementById('q').value;
+      location.search = '?name=' + encodeURIComponent(v);
+    });
+
+    // initial render on load
+    render();
+  </script>
+</body>
+</html>
