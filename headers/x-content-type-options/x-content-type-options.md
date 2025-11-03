@@ -1,101 +1,69 @@
 # Purpose
 
-The `Referrer-Policy` header controls how much information the browser includes in the `Referer` HTTP header when navigating between pages (links, forms, images, scripts, redirects, etc.). 
+The `X-Content-Type-Options` is an HTTP response header that tells browsers to **stop MIME sniffing** and to trust the `Content-Type` header the server sends. 
 
-Without a strict policy, URLs — including **query parameters that may contain sensitive data** — can be leaked to **third-party websites**. 
+MIME sniffing is when a browser inspects a resource’s actual bytes (its content) instead of relying solely on the server’s `Content-Type` header, then heuristically decides a more “likely” MIME type to use — for example treating a `text/plain` response that contains JavaScript-like text as `application/javascript`. 
 
-For example:
+That behavior was originally intended to improve compatibility with misconfigured servers, but it can be dangerous: an attacker who can make the site return attacker-controlled content (or exploit a mislabelled upload/endpoint) may trick the browser into executing script or styles, enabling XSS or other client-side attacks.
 
-1. A user visits [https://example.com/account?token=abcd1234](https://example.com/account?token=abcd1234).
-2. They then click a link to [https://attacker.com/collect](https://attacker.com/collect).
-3. If `Referrer-Policy` is not set or too permissive, the browser will send `Referer: https://example.com/account?token=abcd1234`.
-
-This leaks internal paths, user identifiers, search terms, or even session tokens depending on poor app design. A strict `Referrer-Policy` prevents this kind of data leakage.
+The simple mitigation is to ensure correct `Content-Type` values and send `X-Content-Type-Options: nosniff`, which tells browsers to trust the declared type and not perform sniffing. This prevents browsers from guessing a resource’s type (for example turning what the server labelled `text/plain` into executable JavaScript or CSS) — reducing the risk that a resource with an incorrect or attacker-controlled MIME type will be interpreted and executed in a way that enables XSS or other attacks.
 
 # Values
 
 | Value | Behavior |
 | --- | --- |
-| `no-referrer` | Sends **no** `Referer` header, ever. |
-| `same-origin` | Sends full referrer **only** to same origin; strips completely on cross-origin. |
-| `strict-origin` | Sends only the origin (`https://example.com`) to HTTPS sites, **no path/query**, and sends nothing to HTTP. |
-| `strict-origin-when-cross-origin` (Recommended) | Sends full URL **for same-origin**, origin only for cross-origin (and nothing on HTTP downgrade). |
-| `no-referrer-when-downgrade`  | Sends full URL except when going from HTTPS → HTTP. Not privacy-friendly. |
+| `nosniff` | Instructs the browser **not** to MIME-sniff; the browser should strictly follow the `Content-Type` header and refuse to interpret content as a different type. |
 
 # References
 
-- [Referrer-Policy (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
-- [Referrer Policy Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#referrer-policy)
-- [Referrer Policy specification (W3C)](https://w3c.github.io/webappsec-referrer-policy/)
+- [X-Content-Type-Options (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options)
+- [HTTP Security Response Headers CheatSheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#x-content-type-options)
+- [MIME Sniffing in Browsers and the Security Implications (Coalfire)](https://coalfire.com/the-coalfire-blog/mime-sniffing-in-browsers-and-the-security?utm_source=chatgpt.com)
 
 # PoC
 
-This PoC demonstrates how, without a `Referrer-Policy`, full URLs (including query parameters) are leaked to external sites — while strict policies limit or remove that leakage.
+The goal of this PoC is to show the difference between no header and `X-Content-Type-Options: nosniff` by serving a JavaScript file with an incorrect `Content-Type` and observing whether the browser executes it.
 
-## No `Referrer-Policy` Header
+## No `X-Content-Type-Options` Header
 
-Start the server and confirm that the target header is not set:
-    
-```bash
-$ REFERRER=NONE node server.js
-```
-    
-![referrer-policy-1a.png](images/referrer-policy-1a.png)
-    
-On the same-origin link (`leak.html`) the full `secret` leaks:
-    
-![referrer-policy-1b.png](images/referrer-policy-1b.png)
-    
-On the cross-origin link (`example.html`) only the origin is present. This happens because `strict-origin-when-cross-origin` is [the default value when no policy is specified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy#strict-origin-when-cross-origin_2):
-    
-![referrer-policy-1d.png](images/referrer-policy-1d.png)
-    
-## Explicit `strict-origin-when-cross-origin`
-
-The same behavior as above is expected if the header is explicitly set to `strict-origin-when-cross-origin`: 
-    
-```bash
-$ REFERRER=STRICT node server.js
-```
-    
-![referrer-policy-2a.png](images/referrer-policy-2a.png)
-    
-As before, the secret will be leaked on same-origin request (`leak.html`):
-    
-![referrer-policy-2b.png](images/referrer-policy-2b.png)
-    
-But not on cross-origin requests (`example.com`):
-    
-![referrer-policy-2c.png](images/referrer-policy-2c.png)
-
-## `no_referrer_when_downgrade`
-    
-Next, restart the server and set the permissive value of `no_referrer_when_downgrade`:
-    
-```bash
-$ REFERRER=NO_REFERRER_WHEN_DOWNGRADE node server.js
-```
-    
-![referrer-policy-3a.png](images/referrer-policy-3a.png)
-    
-Both same-origin (`leak.html`) and cross-origin (`example.com`) requests leak the `secret`:
-    
-![referrer-policy-3b.png](images/referrer-policy-3b.png)
-    
-![referrer-policy-3c.png](images/referrer-policy-3c.png)
-
-## `no-referrer`
-
-Finally, restart the server and set the header value to `no-referrer`:
+Serve `script.js` as JavaScript content but intentionally set the `Content-Type: text/plain` so there is a mismatch:
 
 ```bash
-$ REFERRER=NO_REFERRER node server.js
+$ node server.js
 ```
 
-![referrer-policy-4a.png](images/referrer-policy-4a.png)
+Confirm that the header is not set:
 
-No `Referrer` header is ever sent in both the same-origin (`leak.html`) and cross-origin (`example.com`) requests:
+```bash
+$ curl -I http://localhost:3000/script.js
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Date: Tue, 28 Oct 2025 16:53:36 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+```
+Visiting the page on the browser the `script.js` file will be successfully loaded and executed:
 
-![referrer-policy-4b.png](images/referrer-policy-4b.png)
+![x-content-type-options-1a.png](images/x-content-type-options-1a.png)
+    
+## `X-Content-Type-Options: nosniff`
 
-![referrer-policy-4c.png](images/referrer-policy-4c.png)
+Start the server with the header set and confirm its presence:
+
+```bash
+# Restart the server with the target header present
+$ NOSNIFF=1 node server.js
+
+# Confirm that the target header is now set
+$ curl -I http://localhost:3000/script.js
+HTTP/1.1 200 OK
+X-Content-Type-Options: nosniff
+Content-Type: text/plain; charset=utf-8
+Date: Tue, 28 Oct 2025 16:59:18 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+```
+
+Now the `script.js` file will be blocked:
+
+![x-content-type-options-1b.png](images/x-content-type-options-1b.png)
