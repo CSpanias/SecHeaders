@@ -1,16 +1,20 @@
 # Purpose
 
-`Referrer-Policy` controls how much information the browser sends in the `Referer` HTTP header when navigating from one page to another (links, forms, images, scripts, redirects, etc.). Without a strict policy, URLs — including **query parameters that may contain sensitive data** — can be leaked to **third-party websites**. For example:
+The `Referrer-Policy` header controls how much information the browser includes in the `Referer` HTTP header when navigating between pages (links, forms, images, scripts, redirects, etc.). 
 
-1. A user visits [`https://example.com/account?token=abcd1234`](https://example.com/account?token=abcd1234).
-2. They then click to a link to `https://attacker.com/collect`.
-3. If `Referrer-Policy` is **not** set or too permissive, the browser will send `Referer: https://example.com/account?token=abcd1234`.
+Without a strict policy, URLs — including **query parameters that may contain sensitive data** — can be leaked to **third-party websites**. 
+
+For example:
+
+1. A user visits [https://example.com/account?token=abcd1234](https://example.com/account?token=abcd1234).
+2. They then click a link to [https://attacker.com/collect](https://attacker.com/collect).
+3. If `Referrer-Policy` is not set or too permissive, the browser will send `Referer: https://example.com/account?token=abcd1234`.
 
 This leaks internal paths, user identifiers, search terms, or even session tokens depending on poor app design. A strict `Referrer-Policy` prevents this kind of data leakage.
 
 # Values
 
-| Value | Behavior (when navigating) |
+| Value | Behavior |
 | --- | --- |
 | `no-referrer` | Sends **no** `Referer` header, ever. |
 | `same-origin` | Sends full referrer **only** to same origin; strips completely on cross-origin. |
@@ -26,97 +30,71 @@ This leaks internal paths, user identifiers, search terms, or even session token
 
 # PoC
 
-The goal of this PoC is to demonstrate that without a policy, full URLs (including query parameters) are leaked to an external site, whereas with a strict policy, only the origin is leaked.
+This PoC demonstrates how, without a `Referrer-Policy`, full URLs (including query parameters) are leaked to external sites — while strict policies limit or remove that leakage.
 
-1. Start the server, confirm that the target header is not set, and visit the links:
-    
-    ```bash
-    # Launch the server
-    $ REFERRER=NONE node server.js
-    Starting server on http://localhost:3000
-    Referrer-Policy mode: NONE (no header set)
-    Server ready.
-    Try:
-      curl -I "http://localhost:3000/victim.html?secret=LEAKME"
-      Open: http://localhost:3000/victim.html?secret=LEAKME
-    Change referrer mode with: REFERRER=NO_REFERRER node server.js
-    ```
-    
-    ![referrer-policy-1a.png](images/referrer-policy-1a.png)
-    
-    On the same-origin link (`leak.html`) the full `secret` should be leaked:
-    
-    ![referrer-policy-1b.png](images/referrer-policy-1b.png)
-    
-    However, on the cross-origin link (`example.html`) only the origin is present. This happens because `strict-origin-when-cross-origin` is [the default value when no policy is specified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy#strict-origin-when-cross-origin_2) according to MDN’s documentation:
-    
-    ![referrer-policy-1c.png](images/referrer-policy-1c.png)
-    
-    ![referrer-policy-1d.png](images/referrer-policy-1d.png)
-    
-2. We can confirm the above default behavior by restarting the server with the target header explicitly set to `strict-origin-when-cross-origin`: 
-    
-    ```bash
-    $ REFERRER=STRICT node server.js
-    Starting server on http://localhost:3000
-    Referrer-Policy mode: STRICT -> strict-origin-when-cross-origin
-    Server ready.
-    Try:
-      curl -I "http://localhost:3000/victim.html?secret=LEAKME"
-      Open: http://localhost:3000/victim.html?secret=LEAKME
-    Change referrer mode with: REFERRER=NO_REFERRER node server.js
-    ```
-    
-    ![referrer-policy-2a.png](images/referrer-policy-2a.png)
-    
-    As before, the secret will be leaked on same-origin request (`leak.html`):
-    
-    ![referrer-policy-2b.png](images/referrer-policy-2b.png)
-    
-    But not on cross-origin requests (`example.com`):
-    
-    ![referrer-policy-2c.png](images/referrer-policy-2c.png)
-    
-3. Next, restart the server and set the permissive value of `no_referrer_when_downgrade`:
-    
-    ```bash
-    $ REFERRER=NO_REFERRER_WHEN_DOWNGRADE node server.js
-    Starting server on http://localhost:3000
-    Referrer-Policy mode: NO_REFERRER_WHEN_DOWNGRADE -> no-referrer-when-downgrade
-    Server ready.
-    Try:
-      curl -I "http://localhost:3000/victim.html?secret=LEAKME"
-      Open: http://localhost:3000/victim.html?secret=LEAKME
-    Change referrer mode with: REFERRER=NO_REFERRER node server.js
-    ```
-    
-    ![referrer-policy-3a.png](images/referrer-policy-3a.png)
-    
-    The `secret` should leak in both the same-origin (`leak.html`) and cross-origin (`example.com`) requests:
-    
-    ![referrer-policy-3b.png](images/referrer-policy-3b.png)
-    
-    ![referrer-policy-3c.png](images/referrer-policy-3c.png)
-    
+## No `Referrer-Policy` Header
 
-5. Finally, restart the server and set the header value to `no-referrer`:
+Start the server and confirm that the target header is not set:
+    
+```bash
+$ REFERRER=NONE node server.js
+```
+    
+![referrer-policy-1a.png](images/referrer-policy-1a.png)
+    
+On the same-origin link (`leak.html`) the full `secret` leaks:
+    
+![referrer-policy-1b.png](images/referrer-policy-1b.png)
+    
+On the cross-origin link (`example.html`) only the origin is present. This happens because `strict-origin-when-cross-origin` is [the default value when no policy is specified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy#strict-origin-when-cross-origin_2):
+    
+![referrer-policy-1d.png](images/referrer-policy-1d.png)
+    
+## Explicit `strict-origin-when-cross-origin`
+
+The same behavior as above is expected if the header is explicitly set to `strict-origin-when-cross-origin`: 
+    
+```bash
+$ REFERRER=STRICT node server.js
+```
+    
+![referrer-policy-2a.png](images/referrer-policy-2a.png)
+    
+As before, the secret will be leaked on same-origin request (`leak.html`):
+    
+![referrer-policy-2b.png](images/referrer-policy-2b.png)
+    
+But not on cross-origin requests (`example.com`):
+    
+![referrer-policy-2c.png](images/referrer-policy-2c.png)
+
+## `no_referrer_when_downgrade`
+    
+Next, restart the server and set the permissive value of `no_referrer_when_downgrade`:
+    
+```bash
+$ REFERRER=NO_REFERRER_WHEN_DOWNGRADE node server.js
+```
+    
+![referrer-policy-3a.png](images/referrer-policy-3a.png)
+    
+Both same-origin (`leak.html`) and cross-origin (`example.com`) requests leak the `secret`:
+    
+![referrer-policy-3b.png](images/referrer-policy-3b.png)
+    
+![referrer-policy-3c.png](images/referrer-policy-3c.png)
+
+## `no-referrer`
+
+Finally, restart the server and set the header value to `no-referrer`:
 
 ```bash
 $ REFERRER=NO_REFERRER node server.js
-Starting server on http://localhost:3000
-Referrer-Policy mode: NO_REFERRER -> no-referrer
-Server ready.
-Try:
-  curl -I "http://localhost:3000/victim.html?secret=LEAKME"
-  Open: http://localhost:3000/victim.html?secret=LEAKME
-Change referrer mode with: REFERRER=NO_REFERRER node server.js
-Referer received: (none)
-Referer received: (none)
 ```
 
 ![referrer-policy-4a.png](images/referrer-policy-4a.png)
 
-The header should not exist at all in both the same-origin (`leak.html`) and cross-origin requests (`example.com`):
+No `Referrer` header is ever sent in both the same-origin (`leak.html`) and cross-origin (`example.com`) requests:
 
 ![referrer-policy-4b.png](images/referrer-policy-4b.png)
 
