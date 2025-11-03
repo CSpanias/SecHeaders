@@ -42,7 +42,7 @@ The goal of this PoC is to demonstrate that without a policy, full URLs (includi
     Change referrer mode with: REFERRER=NO_REFERRER node server.js
     ```
     
-    ![referrer-policy-1a.png](headers/referrer-policy/images/referrer-policy-1a.png)
+    ![referrer-policy-1a.png](/images/referrer-policy-1a.png)
     
     On the same-origin link (`leak.html`) the full `secret` should be leaked:
     
