@@ -26,4 +26,4 @@ This leaks internal paths, user identifiers, search terms, or even session token
 
 # PoC
 
-You can find a PoC walkthrough [here](https://cloudjourneys.notion.site/Referrer-Policy-29c53fc56d2680f998c5f6466b200f57).
+Find how the PoC works [here](https://cloudjourneys.notion.site/Referrer-Policy-29c53fc56d2680f998c5f6466b200f57).
