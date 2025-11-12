@@ -1,10 +1,6 @@
 # Purpose
 
-The `Referrer-Policy` header controls how much information the browser includes in the `Referer` HTTP header when navigating between pages (links, forms, images, scripts, redirects, etc.). 
-
-Without a strict policy, URLs — including **query parameters that may contain sensitive data** — can be leaked to **third-party websites**. 
-
-For example:
+The `Referrer-Policy` header controls how much information the browser includes in the `Referer` HTTP header when navigating between pages (links, forms, images, scripts, redirects, etc.). Without a strict policy, URLs — including **query parameters that may contain sensitive data** — can be leaked to **third-party websites**. For example:
 
 1. A user visits [https://example.com/account?token=abcd1234](https://example.com/account?token=abcd1234).
 2. They then click a link to [https://attacker.com/collect](https://attacker.com/collect).
@@ -52,7 +48,7 @@ On the cross-origin link (`example.html`) only the origin is present. This happe
     
 ## Explicit `strict-origin-when-cross-origin`
 
-The same behavior as above is expected if the header is explicitly set to `strict-origin-when-cross-origin`: 
+The same behavior is expected if the header is explicitly set to `strict-origin-when-cross-origin`: 
     
 ```bash
 $ REFERRER=STRICT node server.js
