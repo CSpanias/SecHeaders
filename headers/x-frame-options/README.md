@@ -40,7 +40,7 @@ Serving HTTP on 0.0.0.0 port 3000 (http://0.0.0.0:3000/) ...
 Serving HTTP on 0.0.0.0 port 4000 (http://0.0.0.0:4000/) ...
 ```
 
-1. Confirm the the `X-Frame-Options` header is not set:
+2. Confirm the the `X-Frame-Options` header is not set:
 
 ```bash
 $ curl -I http://localhost:3000/victim.html
