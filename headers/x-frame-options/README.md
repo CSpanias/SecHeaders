@@ -52,47 +52,19 @@ Content-Length: 1080
 Last-Modified: Tue, 28 Oct 2025 11:14:25 GMT
 ```
 
-2. Open `victim.html` in your browser and click the *Confirm Transfer* button:
+3. Open `victim.html` in your browser and click the *Confirm Transfer* button:
 
 ![x-frame-options-1a.png](images/x-frame-options-1a.png)
 
 ![x-frame-options-1b.png](images/x-frame-options-1b.png)
 
-3. Open the `attack.html` in your browser and click the *Claim Prize* button. Since everything is local and no framing protection exists, the click will submit the form inside the framed victim page and you’ll see the pop up demonstrating clickjacking. This can be also confirmed by the HTTP response:
+4. Open the `attack.html` in your browser and click the *Claim Prize* button. Since everything is local and no framing protection exists, the click will submit the form inside the framed victim page and you’ll see the pop up demonstrating clickjacking. This can be also confirmed by the HTTP response:
 
 ![x-frame-options-1c.png](images/x-frame-options-1c.png)
 
 ![x-frame-options-1d.png](images/x-frame-options-1d.png)
 
-4. Now add protection to the app — create `server.js` within the `victim` directory:
-- `server.js`
-    
-    ```jsx
-    const express = require('express');
-    const path = require('path');
-    
-    const app = express();
-    const PORT = process.env.PORT || 3000;
-    
-    // Add frame protection BEFORE static middleware
-    app.use((req, res, next) => {
-      // Choose one:
-      res.setHeader('X-Frame-Options', 'DENY');        // strictest: block all framing
-      // res.setHeader('X-Frame-Options', 'SAMEORIGIN');   // allow only same-origin frames
-      // Alternative modern CSP (not used here): 
-      // res.setHeader('Content-Security-Policy', "frame-ancestors 'self'");
-      next();
-    });
-    
-    // Then serve static files (victim.html etc.)
-    app.use(express.static(path.join(__dirname)));
-    
-    app.listen(PORT, () => {
-      console.log(`Victim server running: http://localhost:${PORT}/victim.html`);
-    });
-    ```
-    
-5. Stop the Python HTTP server running on port `3000` and start the node server:
+5. Now add protection to the app by stopping the Python HTTP server running on port `3000` and start the node server:
 
 ```jsx
 $ npm init -y && npm install express
