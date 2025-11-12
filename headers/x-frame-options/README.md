@@ -52,19 +52,19 @@ Content-Length: 1080
 Last-Modified: Tue, 28 Oct 2025 11:14:25 GMT
 ```
 
-1. Open `victim.html` in your browser and click the *Confirm Transfer* button:
+2. Open `victim.html` in your browser and click the *Confirm Transfer* button:
 
 ![x-frame-options-1a.png](images/x-frame-options-1a.png)
 
 ![x-frame-options-1b.png](images/x-frame-options-1b.png)
 
-1. Open the `attack.html` in your browser and click the *Claim Prize* button. Since everything is local and no framing protection exists, the click will submit the form inside the framed victim page and you’ll see the pop up demonstrating clickjacking. This can be also confirmed by the HTTP response:
+3. Open the `attack.html` in your browser and click the *Claim Prize* button. Since everything is local and no framing protection exists, the click will submit the form inside the framed victim page and you’ll see the pop up demonstrating clickjacking. This can be also confirmed by the HTTP response:
 
 ![x-frame-options-1c.png](images/x-frame-options-1c.png)
 
 ![x-frame-options-1d.png](images/x-frame-options-1d.png)
 
-1. Now add protection to the app — create `server.js` within the `victim` directory:
+4. Now add protection to the app — create `server.js` within the `victim` directory:
 - `server.js`
     
     ```jsx
@@ -92,7 +92,7 @@ Last-Modified: Tue, 28 Oct 2025 11:14:25 GMT
     });
     ```
     
-1. Stop the Python HTTP server running on port `3000` and start the node server:
+5. Stop the Python HTTP server running on port `3000` and start the node server:
 
 ```jsx
 $ npm init -y && npm install express
@@ -100,7 +100,7 @@ $ node server.js
 Victim server: http://localhost:3000/victim.html
 ```
 
-1. Confirm that the `X-Frame-Options` header is set and try loading the `attacker.html` page again:
+6. Confirm that the `X-Frame-Options` header is set and try loading the `attacker.html` page again:
 
 ```bash
 $ curl -I http://localhost:3000/victim.html
