@@ -1,10 +1,6 @@
 # Purpose
 
-The `X-Content-Type-Options` is an HTTP response header that tells browsers to **stop MIME sniffing** and to trust the `Content-Type` header the server sends. 
-
-MIME sniffing is when a browser inspects a resource’s actual bytes (its content) instead of relying solely on the server’s `Content-Type` header, then heuristically decides a more “likely” MIME type to use — for example treating a `text/plain` response that contains JavaScript-like text as `application/javascript`. 
-
-That behavior was originally intended to improve compatibility with misconfigured servers, but it can be dangerous: an attacker who can make the site return attacker-controlled content (or exploit a mislabelled upload/endpoint) may trick the browser into executing script or styles, enabling XSS or other client-side attacks.
+The `X-Content-Type-Options` is an HTTP response header that tells browsers to **stop MIME sniffing** and to trust the `Content-Type` header the server sends. MIME sniffing is when a browser inspects a resource’s actual bytes (its content) instead of relying solely on the server’s `Content-Type` header, then heuristically decides a more “likely” MIME type to use — for example treating a `text/plain` response that contains JavaScript-like text as `application/javascript`. That behavior was originally intended to improve compatibility with misconfigured servers, but it can be dangerous: an attacker who can make the site return attacker-controlled content (or exploit a mislabelled upload/endpoint) may trick the browser into executing script or styles, enabling XSS or other client-side attacks.
 
 The simple mitigation is to ensure correct `Content-Type` values and send `X-Content-Type-Options: nosniff`, which tells browsers to trust the declared type and not perform sniffing. This prevents browsers from guessing a resource’s type (for example turning what the server labelled `text/plain` into executable JavaScript or CSS) — reducing the risk that a resource with an incorrect or attacker-controlled MIME type will be interpreted and executed in a way that enables XSS or other attacks.
 
