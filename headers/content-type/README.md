@@ -1,10 +1,8 @@
 # Purpose
 
-The `Content-Type` HTTP response header tells the browser the MIME type of the resource, for example `text/html`, `application/javascript`, `image/png`, etc. Browsers use this to decide how to process the resource — whether to parse it as HTML, execute it as JavaScript, render an image, etc.
+The `Content-Type` HTTP response header tells the browser the MIME type of the resource, for example `text/html`, `application/javascript`, `image/png`, etc. Browsers use this to decide how to process the resource — whether to parse it as HTML, execute it as JavaScript, render an image, etc. Sending the correct `Content-Type` is essential: an incorrect type can cause resources to be interpreted in the wrong context, leading to broken behavior or security issues, and in some cases combined with browser MIME-sniffing may allow execution of attacker-controlled content.
 
-Sending the correct `Content-Type` is essential: an incorrect type can cause resources to be interpreted in the wrong context, leading to broken behavior or security issues, and in some cases combined with browser MIME-sniffing may allow execution of attacker-controlled content.
-
-# Typical values / examples
+# Values
 
 | Header value | Meaning / use |
 | --- | --- |
@@ -23,11 +21,9 @@ Sending the correct `Content-Type` is essential: an incorrect type can cause res
 
 # PoC
 
-> `Content-Type` (and `X-Content-Type-Options`) apply to the resource that the browser fetches, not the HTML page that references it. `victim.html` is just an HTML document that contains `<script src="/script.js"></script>`. When the browser parses it it issues a separate HTTP request for `/script.js`. The decision to *execute this response as JS or not* is made using the headers on the `/script.js` response.
+> `Content-Type` (and `X-Content-Type-Options`) apply to the resource that the browser fetches, not the HTML page that references it. `victim.html` is just an HTML document that contains `<script src="/script.js"></script>`. When the browser parses it, it issues a separate HTTP request for `/script.js`. The decision to *execute this response as JS or not* is made using the headers on the `/script.js` response.
 
 This PoC is simple: a victim page loads `/script.js`. The server intentionally serves `/script.js` with the wrong `Content-Type` (`text/plain`). Depending on the browser and sniffing rules, you may or may not see the script execute; adding `X-Content-Type-Options: nosniff` will instruct modern browsers not to sniff (and thus prevent the JS execution if the declared type is not a script type).
-
-> Note: browsers vary in sniffing behavior. For the clearest demo, use fetch() or navigation evidence (but this PoC keeps it simple: a script that calls console.log + alert).
     
 1. Serve with correct `Content-Type`, confirm the header’s value, and load the page. The JS file should be executed:
     
