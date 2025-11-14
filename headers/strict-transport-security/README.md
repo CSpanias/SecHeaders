@@ -89,7 +89,7 @@ Keep-Alive: timeout=5
 
 ![strict-transport-security-1c.png](images/strict-transport-security-1c.png)
 
-3. Run the server with HSTS, confirm that it's there:
+3. Run the server with HSTS and confirm that it's there:
 
 ```bash
 $ HSTS=1 node server.js
