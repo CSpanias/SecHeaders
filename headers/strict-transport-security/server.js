@@ -10,7 +10,7 @@ const path = require('path');
 const HOST = process.env.HOST || 'example.test';
 const HTTP_PORT = Number(process.env.HTTP_PORT || 80);
 const HTTPS_PORT = Number(process.env.HTTPS_PORT || 443);
-const HSTS_ENABLED = !!process.env.HSTS; // set HSTS=1 to enable header
+const HSTS_ENABLED = process.env.HSTS === "1"; // set HSTS=1 to enable header
 const HSTS_VALUE = process.env.HSTS_VALUE || 'max-age=31536000; includeSubDomains; preload';
 
 const certDir = path.join(__dirname, 'cert');

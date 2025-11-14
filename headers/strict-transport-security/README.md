@@ -23,17 +23,13 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
 # PoC
 
-This PoC shows how HSTS is sent and what effect it has on browsers. Important constraints:
+This PoC shows how HSTS is sent and what effect it has on browsers. We will run both an HTTPS server (port 443) and an HTTP server (port 80). Some things to note:
+- HSTS **only** applies when received over HTTPS, i.e. the header must be sent on an HTTPS response.
+- To see automatic upgrades from `http://` to `https://` we should serve HTTPS on the standard port (443). Using non-standard ports complicates automatic upgrades.
 
-- HSTS **only** applies when received over HTTPS. The header must be sent on an HTTPS response.
-- To see automatic upgrades from `http://` to `https://` you should serve HTTPS on the standard port (443) or test with explicit hostnames/ports understanding how browsers treat ports. Using nonstandard ports complicates automatic upgrades (browsers normally upgrade the scheme and use default HTTPS port 443 unless the URL includes a port).
-- For local testing, use `mkcert` (recommended) or a self-signed cert and accept it in your browser. You may need to run servers on privileged ports (80/443) which requires elevated permissions.
+> Note: We will use the hostname `example.test` to avoid issues with `localhost` and certs.
 
-Below is a minimal Node PoC that runs an HTTPS server (port 443) and an HTTP server (port 80). The HTTPS server can be configured to send the HSTS header when `HSTS=1`. The victim HTML demonstrates the site; you’ll observe the header with `curl -I` and test the upgrade by visiting `http://example.test/` (mapped to localhost in `/etc/hosts`) — the browser will upgrade to HTTPS if HSTS previously received.
-
-> Note: I use the hostname example.test to avoid issues with localhost and certs. Use mkcert to generate certs for example.test.
-
-1. Generate a local certificate:
+1. Generate a local certificate using `mkcert`:
 
 ```bash
 # Install mkcert
@@ -71,36 +67,32 @@ $ grep example.test /etc/hosts
 ::1     ip6-localhost ip6-loopback example.test
 ```
 
-2. Run the server without HSTS set and confirm that it’s not there:
+2. Run the server without HSTS set, confirm that it’s not there, and visit HTTP (port 80) and HTTPS (port 443). Note that we can jump again to the former after we have visited the latter:
 
 ```bash
-$ HSTS=0 HOST=example.test node server.js
+$ HSTS=0 node server.js
 HTTPS server running: https://example.test:443/victim.html
-HSTS is ENABLED -> max-age=31536000; includeSubDomains; preload
+HSTS is DISABLED
 HTTP server running: http://example.test:80/victim.html
 
 $ curl -I https://example.test
 HTTP/1.1 200 OK
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 Content-Type: text/html; charset=utf-8
-Date: Sat, 01 Nov 2025 10:51:09 GMT
+Date: Fri, 14 Nov 2025 09:49:46 GMT
 Connection: keep-alive
 Keep-Alive: timeout=5
-
-$ curl -I http://example.test
-HTTP/1.1 200 OK
-Content-Type: text/html; charset=utf-8
-Date: Sat, 01 Nov 2025 10:51:13 GMT
-Connection: keep-alive
-Keep-Alive: timeout=
 ```
 
 ![strict-transport-security-1a.png](images/strict-transport-security-1a.png)
 
-3. Run the server with HSTS and try again:
+![strict-transport-security-1b.png](images/strict-transport-security-1b.png)
+
+![strict-transport-security-1c.png](images/strict-transport-security-1c.png)
+
+3. Run the server with HSTS, confirm that it's there:
 
 ```bash
-$ HSTS=1 HOST=example.test node server.js
+$ HSTS=1 node server.js
 HTTPS server running: https://example.test:443/victim.html
 HSTS is ENABLED -> max-age=31536000; includeSubDomains; preload
 HTTP server running: http://example.test:80/victim.html
@@ -109,22 +101,17 @@ $ curl -I https://example.test
 HTTP/1.1 200 OK
 Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 Content-Type: text/html; charset=utf-8
-Date: Sat, 01 Nov 2025 10:52:16 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
-
-$ curl -I http://example.test
-HTTP/1.1 200 OK
-Content-Type: text/html; charset=utf-8
-Date: Sat, 01 Nov 2025 10:52:18 GMT
+Date: Fri, 14 Nov 2025 10:05:03 GMT
 Connection: keep-alive
 Keep-Alive: timeout=5
 ```
 
-![strict-transport-security-1b.png](images/strict-transport-security-1b.png)
-
-4. After visiting the `https://` protocol, the certificate would be stored in the browser. As a result, by visiting the `http://` version of the server the browser should automatically rewrite HTTP to HTTPS before the request leaves:
-
-![strict-transport-security-1c.png](images/strict-transport-security-1c.png)
-
 ![strict-transport-security-1d.png](images/strict-transport-security-1d.png)
+
+4. After visiting the `https://` protocol, the certificate would be stored in the browser:
+
+![strict-transport-security-1e.png](images/strict-transport-security-1e.png)
+
+5. Now, we won't be able to visit the HTTP port; the browser will automatically rewrite HTTP to HTTPS before the request leaves:
+
+![strict-transport-security-1f.png](images/strict-transport-security-1f.png)
