@@ -17,10 +17,9 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
 # References
 
-- MDN — `Strict-Transport-Security` header.
-- OWASP — HTTP Header Security Cheat Sheet.
-- hstspreload.org — HSTS Preload submission requirements.
-- Browser docs (Chromium, Firefox) on HSTS behavior.
+- [Strict-Transport-Security header (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security)
+- [HTTP Strict Transport Security Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html)
+- [HTTP Strict Transport Security (HSTS)](https://hstspreload.org/)
 
 # PoC
 
