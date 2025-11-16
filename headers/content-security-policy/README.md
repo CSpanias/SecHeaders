@@ -1,6 +1,6 @@
 # Purpose
 
-The `Content-Security-Policy` (CSP) HTTP response header allows a website to define **which sources of content the browser is allowed to load or execute**. It is one of the most powerful browser-side security controls available and is primarily designed to **mitigate JavaScript (JS) (aso known as Cross-Site Scripting, i.e. XSS)** and other injection attacks.
+The `Content-Security-Policy` (CSP) HTTP response header allows a website to define **which sources of content the browser is allowed to load or execute**. It is one of the most powerful browser-side security controls available and is primarily designed to **mitigate JavaScript (JS) injection attacks**.
 
 Browsers normally load resources such as scripts, images, stylesheets, iframes, fonts, AJAX requests, and media from any origin the page references. If an attacker manages to inject HTML or JS into a vulnerable page, the browser will execute it unless additional protections exist.
 
