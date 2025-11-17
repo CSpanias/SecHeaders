@@ -1,0 +1,17 @@
+<h1>Xhr Restriction Demo</h1>
+
+<button onclick="test()">Try Fetch</button>
+
+<pre id="out"></pre>
+
+<script>
+function test() {
+  fetch("https://google.com")
+    .then(r => r.text())
+    .then(t => out.textContent = "SUCCESS\n" + t)
+    .catch(e => out.textContent = "BLOCKED\n" + e);
+}
+</script>
+
+<p>Because CSP uses:  
+<code>connect-src 'self' https://api.example.com</code></p>

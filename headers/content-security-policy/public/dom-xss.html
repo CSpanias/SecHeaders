@@ -1,0 +1,11 @@
+<h1>DOM XSS Demo</h1>
+
+<button onclick="run()">Click me</button>
+<script>
+function run() {
+  // typical DOM sink
+  location.hash && eval(location.hash.substring(1));
+}
+</script>
+
+<p>Try: <code>#alert(1)</code></p>

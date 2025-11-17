@@ -1,0 +1,11 @@
+<h1>Reflected XSS Demo</h1>
+
+<p>Try visiting:  
+<code>?q=<script>alert(1)</script></code></p>
+
+<div id="output"></div>
+
+<script>
+  const q = new URLSearchParams(location.search).get("q");
+  document.getElementById("output").innerHTML = q; // vulnerable
+</script>

@@ -1,0 +1,9 @@
+<h1>Nonce Script Demo</h1>
+
+<script nonce="random123" src="/scripts/nonce-script.js"></script>
+
+<p>Any script without the nonce will fail.</p>
+
+<script>
+  alert("This script SHOULD be blocked.");
+</script>

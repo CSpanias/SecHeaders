@@ -18,7 +18,7 @@ While not replacements in the strict sense, CSP directives like `object-src`, `m
 
 # Values
 
-A CSP header is composed of **directives**, each controlling a different type of content.
+A CSP header is composed of **directives**, each controlling a different type of content:
 
 | Directive | Meaning / use |
 | --- | --- |
@@ -54,3 +54,26 @@ This configuration blocks inline JavaScript, event handlers, remote scripts, plu
 - [Content-Security-Policy (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 - [CSP Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html)
 - [Google CSP Evaluator](https://csp-evaluator.withgoogle.com/)
+
+# PoC
+
+For this PoC we have created one server that dynamically applies different CSP headers depending on an environment variable:
+- CSP_MODE=reflected-xss
+- CSP_MODE=dom-xss
+- CSP_MODE=unsafe-inline
+- CSP_MODE=clickjacking
+- CSP_MODE=mixed-content
+- CSP_MODE=xhr-restriction
+- CSP_MODE=script-nonce
+
+Each mode demonstrates a different use-case or attack scenario related to CSP. Below is the list with descriptions and what each mode shows:
+
+| **Mode**            | **What It Demonstrates**                              | **CSP Used**                         | **Outcome**               |
+| ------------------- | ----------------------------------------------------- | ------------------------------------ | ------------------------- |
+| **reflected-xss**   | Shows reflected XSS vulnerability & how CSP blocks it | `script-src 'self'`                  | Attack JS fails to run    |
+| **dom-xss**         | Shows DOM-based sink exploitation & CSP mitigation    | `script-src 'self'`                  | Inline `<script>` blocked |
+| **unsafe-inline**   | Shows why `'unsafe-inline'` is dangerous              | `script-src 'self' 'unsafe-inline'`  | Attacker JS **executes**  |
+| **script-nonce**    | Demonstrates nonce-based script whitelisting          | `script-src 'nonce-XYZ'`             | Only `nonce` scripts run  |
+| **mixed-content**   | Shows mixed-content blocking via CSP                  | `block-all-mixed-content`            | HTTP image/iframe blocked |
+| **clickjacking**    | Shows iframe embedding & CSP frame restrictions       | `frame-ancestors 'none'`             | Page cannot be framed     |
+| **xhr-restriction** | Shows restricting fetch/XHR destinations              | `connect-src 'self' api.example.com` | Requests to others fail   |
