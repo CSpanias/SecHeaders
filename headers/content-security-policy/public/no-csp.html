@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>No CSP (Baseline)</title>
+</head>
+<body>
+  <h1>No CSP (Baseline)</h1>
+
+  <p>This page has <strong>no Content-Security-Policy</strong> header.</p>
+
+  <p>Examples:</p>
+  <ul>
+    <li>Reflected: <code>?q=&lt;img src=x onerror=alert(1)&gt;</code></li>
+    <li>DOM-Based: <code>#alert(2)</code></li>
+  </ul>
+
+  <h3>Output:</h3>
+  <div id="out"></div>
+
+  <script>
+    // Reflected XSS (HTML context)
+    const p = new URLSearchParams(location.search).get("q");
+    if (p) {
+      out.innerHTML = p;
+    }
+
+    // DOM XSS (JS context)
+    if (location.hash.length > 1) {
+      const hashPayload = location.hash.substring(1);
+      eval(hashPayload);
+    }
+  </script>
+</body>
+</html>

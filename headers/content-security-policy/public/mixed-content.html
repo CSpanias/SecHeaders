@@ -1,5 +1,20 @@
-<h1>Mixed Content Demo</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mixed Content Demo</title>
+</head>
+<body>
+  <h1>Mixed Content Demo</h1>
 
-<p>This tries to load an HTTP image:</p>
+  <p>
+    This page tries to load an <strong>insecure HTTP image</strong>.
+    Since this resource cannot be upgraded to HTTPS, CSP will block it.
+  </p>
 
-<img src="http://httpbin.org/image/png" alt="Should be blocked">
+  <!-- HTTP image on a separate port (cannot auto-upgrade) -->
+  <img src="http://no.https:4000/test.png" alt="Blocked insecure image">
+
+  <p>Check console and network tab for blocking messages.</p>
+</body>
+</html>

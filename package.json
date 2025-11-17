@@ -7,10 +7,15 @@
     "start": "node server.js",
     "start-dev": "DEBUG=secheaders node server.js"
   },
-  "keywords": ["security","headers","referrer-policy","poc"],
+  "keywords": [
+    "security",
+    "headers",
+    "referrer-policy",
+    "poc"
+  ],
   "author": "You",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.21.2"
   }
 }

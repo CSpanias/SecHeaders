@@ -70,6 +70,7 @@ Each mode demonstrates a different use-case or attack scenario related to CSP. B
 
 | **Mode**            | **What It Demonstrates**                              | **CSP Used**                         | **Outcome**               |
 | ------------------- | ----------------------------------------------------- | ------------------------------------ | ------------------------- |
+| **no-csp**          | Baseline vulnerable mode                              | No CSP                               | Attacks work
 | **reflected-xss**   | Shows reflected XSS vulnerability & how CSP blocks it | `script-src 'self'`                  | Attack JS fails to run    |
 | **dom-xss**         | Shows DOM-based sink exploitation & CSP mitigation    | `script-src 'self'`                  | Inline `<script>` blocked |
 | **unsafe-inline**   | Shows why `'unsafe-inline'` is dangerous              | `script-src 'self' 'unsafe-inline'`  | Attacker JS **executes**  |
