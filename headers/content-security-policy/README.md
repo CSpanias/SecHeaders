@@ -62,12 +62,12 @@ For this PoC we have created one server that dynamically applies different CSP h
 | **Mode**            | **What It Demonstrates**                              | **CSP Used**                         | **Outcome**               |
 | ------------------- | ----------------------------------------------------- | ------------------------------------ | ------------------------- |
 | **no-csp**          | Baseline vulnerable mode                              | No CSP                               | Attacks work
-| **reflected-xss**   | Shows reflected XSS vulnerability & how CSP blocks it | `script-src 'self'`                  | Attack JS fails to run    |
-| **dom-xss**         | Shows DOM-based sink exploitation & CSP mitigation    | `script-src 'self'`                  | Inline `<script>` blocked |
-| **unsafe-inline**   | Shows why `'unsafe-inline'` is dangerous              | `script-src 'self' 'unsafe-inline'`  | Attacker JS **executes**  |
-| **script-nonce**    | Demonstrates nonce-based script whitelisting          | `script-src 'nonce-XYZ'`             | Only `nonce` scripts run  |
-| **clickjacking**    | Shows iframe embedding & CSP frame restrictions       | `frame-ancestors 'none'`             | Page cannot be framed     |
-| **xhr-restriction** | Shows restricting fetch/XHR destinations              | `connect-src 'self' api.example.com` | Requests to others fail   |
+| **reflected-xss**   | Reflected XSS                                         | `script-src 'self'`                  | Attack JS fails to run    |
+| **dom-xss**         | DOM-based sink exploitation                           | `script-src 'self'`                  | Inline `<script>` blocked |
+| **unsafe-inline**   | Why `'unsafe-inline'` is dangerous                    | `script-src 'self' 'unsafe-inline'`  | Attacker JS **executes**  |
+| **script-nonce**    | Nonce-based script whitelisting                       | `script-src 'nonce-XYZ'`             | Only `nonce` scripts run  |
+| **clickjacking**    | Iframe embedding                                      | `frame-ancestors 'none'`             | Page cannot be framed     |
+| **xhr-restriction** | Restricting fetch/XHR destinations                    | `connect-src 'self' api.example.com` | Requests to others fail   |
 
 ## Reflected-XSS
 
