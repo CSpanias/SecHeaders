@@ -57,16 +57,7 @@ This configuration blocks inline JavaScript, event handlers, remote scripts, plu
 
 # PoC
 
-For this PoC we have created one server that dynamically applies different CSP headers depending on an environment variable:
-- CSP_MODE=reflected-xss
-- CSP_MODE=dom-xss
-- CSP_MODE=unsafe-inline
-- CSP_MODE=clickjacking
-- CSP_MODE=mixed-content
-- CSP_MODE=xhr-restriction
-- CSP_MODE=script-nonce
-
-Each mode demonstrates a different use-case or attack scenario related to CSP. Below is the list with descriptions and what each mode shows:
+For this PoC we have created one server that dynamically applies different CSP headers depending on an environment variable (`CSP_MODE`). Each mode demonstrates a different use-case or attack scenario related to CSP. Below is the list with descriptions and what each mode shows:
 
 | **Mode**            | **What It Demonstrates**                              | **CSP Used**                         | **Outcome**               |
 | ------------------- | ----------------------------------------------------- | ------------------------------------ | ------------------------- |
@@ -77,3 +68,151 @@ Each mode demonstrates a different use-case or attack scenario related to CSP. B
 | **script-nonce**    | Demonstrates nonce-based script whitelisting          | `script-src 'nonce-XYZ'`             | Only `nonce` scripts run  |
 | **clickjacking**    | Shows iframe embedding & CSP frame restrictions       | `frame-ancestors 'none'`             | Page cannot be framed     |
 | **xhr-restriction** | Shows restricting fetch/XHR destinations              | `connect-src 'self' api.example.com` | Requests to others fail   |
+
+## Reflected-XSS
+
+- The server reflects untrusted input directly into the HTML/JS
+- Reflected-XSS abuses the server, not the browser
+- CSP’s `script-src 'self'` blocks inline JS, so it defends the attack
+
+```bash
+$ CSP_MODE=none node server.js
+
+[CSP PoC] Running mode: none
+[CSP PoC] No CSP header applied (CSP_MODE=none)
+
+[CSP PoC] Server listening on http://localhost:3000
+```
+
+![reflected-xss-1a.png](images/reflected-xss-1a.png)
+
+```bash
+$ CSP_MODE=reflected-xss node server.js
+
+[CSP PoC] Running mode: reflected-xss
+[CSP PoC] Using CSP header:
+script-src 'self'
+
+[CSP PoC] Server listening on http://localhost:3000
+```
+
+![reflected-xss-1b.png](images/reflected-xss-1b.png)
+
+![reflected-xss-1c.png](images/reflected-xss-1c.png)
+
+## Dom-XSS
+
+- It happens inside JS in the browser, not in the server response (like reflected-XSS).
+- The JS code in the browser uses unsafe sinks (e.g. `eval`)
+- If the vulnerable sink is inside an inline script → CSP blocks it
+- If the vulnerable sink is inside an external JS file → CSP cannot block it (DOM-xss)
+- DOM-XSS abuses insecure client-side JS, not the server
+
+```bash
+$ CSP_MODE=none node server.js
+
+[CSP PoC] Running mode: none
+[CSP PoC] No CSP header applied (CSP_MODE=none)
+
+[CSP PoC] Server listening on http://localhost:3000
+```
+
+![dom-xss-1a.png](images/dom-xss-1a.png)
+
+```bash
+$ CSP_MODE=dom-xss node server.js
+
+[CSP PoC] Running mode: dom-xss
+[CSP PoC] Using CSP header:
+script-src 'self'
+
+[CSP PoC] Server listening on http://localhost:3000
+```
+
+![dom-xss-1b.png](images/dom-xss-1b.png)
+
+![dom-xss-1c.png](images/dom-xss-1c.png)
+
+## Unsafe-Inline
+
+```bash
+$ CSP_MODE=unsafe-inline node server.js
+
+[CSP PoC] Running mode: unsafe-inline
+[CSP PoC] Using CSP header:
+script-src 'self' 'unsafe-inline'
+
+[CSP PoC] Server listening on http://localhost:3000
+```
+
+![unsafe-inline-1a.png](images/unsafe-inline-1a.png)
+
+## Script-Nonce
+
+```bash
+$ CSP_MODE=script-nonce node server.js
+
+[CSP PoC] Running mode: script-nonce
+[CSP PoC] Using CSP header:
+script-src 'nonce-random123'
+
+[CSP PoC] Server listening on http://localhost:3000
+```
+
+Page includes a valid nonce script → runs.
+
+![script-nonce-1a.png](images/script-nonce-1a.png)
+
+Attack attempts to inject an inline <script>alert(1)</script> → blocked.
+
+![script-nonce-1b.png](images/script-nonce-1b.png)
+
+## Clickjacking
+
+```bash
+$ CSP_MODE=clickjacking node server.js
+
+[CSP PoC] Mode: clickjacking
+[CSP PoC] CSP Header:
+frame-ancestors 'none'
+
+[CSP PoC] HTTPS server: https://localhost:3443
+```
+
+![clickjacking-1a.png](images/clickjacking-1a.png)
+
+```bash
+$ ls -l clickjacking-attacker.html
+-rwxrwxrwx 1 x7331 x7331 154 Nov 18 09:09 clickjacking-attacker.html
+
+$ python3 -m http.server 4000
+Serving HTTP on 0.0.0.0 port 4000 (http://0.0.0.0:4000/) ...
+```
+
+![clickjacking-1b.png](images/clickjacking-1b.png)
+
+![clickjacking-1c.png](images/clickjacking-1c.png)
+
+## XHR-Restriction
+
+```bash
+$ CSP_MODE=xhr-restriction node server.js
+
+[CSP PoC] Mode: xhr-restriction
+[CSP PoC] CSP Header:
+connect-src 'self' https://allowed.example.com
+
+[CSP PoC] HTTPS server: https://localhost:3443
+```
+
+![xhr-1a.png](images/xhr-1a.png)
+
+When we click *Allowed Fetch* the page tries to request `/api/data` which is a [localhost](http://localhost) URL and, thus, allowed to be fetched:
+
+![xhr-1b.png](images/xhr-1b.png)
+
+However, when we click *Blocked Fetch* the page tries to request `https://google.com`, which is not allowed based on the CSP and, therefore, is blocked:
+
+![xhr-1c.png](images/xhr-1c.png)
+
+![xhr-1d.png](images/xhr-1d.png)
