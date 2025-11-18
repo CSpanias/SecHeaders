@@ -1,0 +1,22 @@
+{
+  "id": "csp-demo",
+  "folder":"Content-Security-Policy",
+  "title": "Content-Security-Policy Demo",
+  "description": "Shows how different CSP policies restrict script execution, inline scripts, and external sources.",
+  "routes": [
+    {
+      "path": "/index.html",
+      "title": "CSP Test Page"
+    },
+    {
+      "path": "/unsafe.html",
+      "title": "Unsafe Inline Script Demo"
+    },
+    {
+      "path": "/external.html",
+      "title": "External Source Demo"
+    }
+  ],
+  "run": "node server.js",
+  "tags": ["csp", "xss", "security"]
+}

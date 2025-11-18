@@ -1,0 +1,22 @@
+{
+  "id": "content-type",
+  "folder":"Content-Type",
+  "title": "Content-Type Header Demo",
+  "description": "Demonstrates how incorrect or misleading Content-Type values can cause script execution, MIME confusion, or misinterpreted responses.",
+  "routes": [
+    {
+      "path": "/index.html",
+      "title": "Main Demo Page"
+    },
+    {
+      "path": "/malicious.js",
+      "title": "Malicious Script Payload"
+    },
+    {
+      "path": "/text-served-as-html",
+      "title": "Text File Served With Wrong MIME Type"
+    }
+  ],
+  "run": "node server.js",
+  "tags": ["mime", "content-type", "browser-parsing"]
+}

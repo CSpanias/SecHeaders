@@ -1,0 +1,18 @@
+{
+  "id": "referrer-policy",
+  "folder":"Referrer-Policy",
+  "title": "Referrer-Policy Demo",
+  "description": "Demonstrates information leakage via the Referer header under different referrer-policy settings.",
+  "routes": [
+    {
+      "path": "/victim.html",
+      "title": "Victim Page"
+    },
+    {
+      "path": "/leak.html",
+      "title": "Leak Page"
+    }
+  ],
+  "run": "node server.js",
+  "tags": ["privacy", "referrer"]
+}

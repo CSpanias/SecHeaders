@@ -1,0 +1,18 @@
+{
+  "id": "x-content-type-options",
+  "folder":"X-Content-Type-Options",
+  "title": "X-Content-Type-Options Demo",
+  "description": "Shows how enabling or disabling the 'nosniff' directive affects browser MIME sniffing and prevents unintended script execution.",
+  "routes": [
+    {
+      "path": "/index.html",
+      "title": "Main Demo Page"
+    },
+    {
+      "path": "/payload.js",
+      "title": "Payload Script (Sniffing Test)"
+    }
+  ],
+  "run": "node server.js",
+  "tags": ["nosniff", "mime", "xcto"]
+}

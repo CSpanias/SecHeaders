@@ -1,0 +1,14 @@
+{
+  "id": "hsts",
+  "folder":"Strict-Transport-Security",
+  "title": "HSTS (Strict-Transport-Security) Demo",
+  "description": "Illustrates how the Strict-Transport-Security header enforces HTTPS on subsequent requests.",
+  "routes": [
+    {
+      "path": "/",
+      "title": "HSTS Demo Home"
+    }
+  ],
+  "run": "node server.js",
+  "tags": ["hsts", "tls", "transport"]
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>X-Frame-Options</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css">
+<link rel="stylesheet" href="/headers/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+<h1>X-Frame-Options</h1>
+
+<div id="content" class="markdown-body">Loading content...</div>
+
+
+<script>
+fetch('README.md')
+.then(res => res.text())
+.then(md => {
+document.getElementById('content').innerHTML = marked.parse(md);
+})
+.catch(err => {
+document.getElementById('content').innerHTML = '<p>Failed to load README.md</p>';
+console.error(err);
+});
+</script>
+</body>
+</html>

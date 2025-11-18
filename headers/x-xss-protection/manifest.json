@@ -1,0 +1,18 @@
+{
+  "id": "x-xss-protection",
+  "folder":"X-XSS-Protection",
+  "title": "X-XSS-Protection Demo",
+  "description": "Demonstrates legacy browser behavior for X-XSS-Protection, showing how enabled/disabled/blocked modes interact with reflective XSS payloads.",
+  "routes": [
+    {
+      "path": "/index.html",
+      "title": "XSS Test Page"
+    },
+    {
+      "path": "/search",
+      "title": "Reflective Input Endpoint"
+    }
+  ],
+  "run": "node server.js",
+  "tags": ["xss", "legacy", "browser-filtering"]
+}
