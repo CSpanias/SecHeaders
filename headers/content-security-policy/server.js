@@ -82,3 +82,8 @@ if (MODE === "mixed-content") {
     console.log(`[CSP PoC] Insecure HTTP server: http://localhost:${HTTP_INSECURE_PORT}`);
   });
 }
+
+// Endpoint for the xhr-restriction PoC
+app.get("/api/hello", (req, res) => {
+  res.json({ message: "Hello from same-origin!" });
+});

@@ -1,17 +1,29 @@
 <h1>Xhr Restriction Demo</h1>
 
-<button onclick="test()">Try Fetch</button>
+<button onclick="good()">Allowed Fetch</button>
+<button onclick="bad()">Blocked Fetch</button>
 
 <pre id="out"></pre>
 
 <script>
-function test() {
+function log(msg) {
+  document.getElementById("out").textContent += msg + "\n";
+}
+
+function good() {
+  fetch("/api/hello")
+    .then(r => r.json())
+    .then(j => log("ALLOWED:\n" + JSON.stringify(j, null, 2)))
+    .catch(e => log("ERROR (unexpected): " + e));
+}
+
+function bad() {
   fetch("https://google.com")
     .then(r => r.text())
-    .then(t => out.textContent = "SUCCESS\n" + t)
-    .catch(e => out.textContent = "BLOCKED\n" + e);
+    .then(t => log("UNEXPECTED SUCCESS:\n" + t))
+    .catch(e => log("BLOCKED:\n" + e));
 }
 </script>
 
-<p>Because CSP uses:  
-<code>connect-src 'self' https://api.example.com</code></p>
+<p>Active CSP:</p>
+<code>connect-src 'self' https://allowed.example.com</code>

@@ -75,6 +75,5 @@ Each mode demonstrates a different use-case or attack scenario related to CSP. B
 | **dom-xss**         | Shows DOM-based sink exploitation & CSP mitigation    | `script-src 'self'`                  | Inline `<script>` blocked |
 | **unsafe-inline**   | Shows why `'unsafe-inline'` is dangerous              | `script-src 'self' 'unsafe-inline'`  | Attacker JS **executes**  |
 | **script-nonce**    | Demonstrates nonce-based script whitelisting          | `script-src 'nonce-XYZ'`             | Only `nonce` scripts run  |
-| **mixed-content**   | Shows mixed-content blocking via CSP                  | `block-all-mixed-content`            | HTTP image/iframe blocked |
 | **clickjacking**    | Shows iframe embedding & CSP frame restrictions       | `frame-ancestors 'none'`             | Page cannot be framed     |
 | **xhr-restriction** | Shows restricting fetch/XHR destinations              | `connect-src 'self' api.example.com` | Requests to others fail   |

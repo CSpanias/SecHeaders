@@ -24,11 +24,6 @@ module.exports = {
     file: "script-nonce.html"
   },
 
-  "mixed-content": {
-    header: "block-all-mixed-content",
-    file: "mixed-content.html"
-  },
-
   "clickjacking": {
     header: "frame-ancestors 'none'",
     file: "clickjacking.html"
