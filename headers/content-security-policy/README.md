@@ -55,9 +55,9 @@ This configuration blocks inline JavaScript, event handlers, remote scripts, plu
 - [CSP Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html)
 - [Google CSP Evaluator](https://csp-evaluator.withgoogle.com/)
 
-# PoC
+# PoCs
 
-This set of PoCs (proof-of-concepts) demonstrates a variety of real-world misuse cases of CSP — how it can block dangerous behavior, and where it’s most helpful.
+This set of PoCs demonstrates a variety of real-world misuse cases of CSP — how it can block dangerous behavior, and where it’s most helpful.
 
 | **Mode**            | **What It Demonstrates**                              | **CSP Used**                         | **Outcome**               |
 | ------------------- | ----------------------------------------------------- | ------------------------------------ | ------------------------- |
@@ -106,11 +106,11 @@ script-src 'self'
 
 ## Dom-XSS
 
-- It happens inside JS in the browser, not in the server response (like reflected-XSS).
-- The JS code in the browser uses unsafe sinks (e.g. `eval`)
-- If the vulnerable sink is inside an inline script → CSP blocks it
-- If the vulnerable sink is inside an external JS file → CSP cannot block it (DOM-xss)
-- DOM-XSS abuses insecure client-side JS, not the server
+Here, the vulnerability is entirely client-side: the script reads `window.location.hash` (the `#…` part of the URL) and executes it using `eval()`. This is a classic DOM-based XSS vector. When CSP is enabled, any JS constructed in this way is blocked if it violates the policy, showing how CSP protects even against purely client-side code injection.
+
+> DOM-based XSS abuses insecure client-side JavaScript (within the browser), not the server!
+
+Start the server and confirm the CSP is not set:
 
 ```bash
 $ CSP_MODE=none node server.js
@@ -122,6 +122,8 @@ $ CSP_MODE=none node server.js
 ```
 
 ![dom-xss-1a.png](images/dom-xss-1a.png)
+
+Restart the server with CSP set:
 
 ```bash
 $ CSP_MODE=dom-xss node server.js
@@ -139,6 +141,10 @@ script-src 'self'
 
 ## Unsafe-Inline
 
+This mode allows `unsafe-inline` in the `script-src` directive. It demonstrates why inline scripts are dangerous: because CSP gives permission for inline script execution, any script injected via HTML or event handlers will run. This illustrates the trade-off between flexibility and security.
+
+Start the server with CSP set:
+
 ```bash
 $ CSP_MODE=unsafe-inline node server.js
 
@@ -153,6 +159,10 @@ script-src 'self' 'unsafe-inline'
 
 ## Script-Nonce
 
+In this PoC, the page uses a server-generated nonce in both the CSP header and the `<script>` tag. Only scripts carrying the correct nonce are allowed to execute. This is considered a strong and modern CSP approach: even if an attacker manages to inject a `<script>` tag, it won’t run without the matching nonce.
+
+Start the server with CSP set:
+
 ```bash
 $ CSP_MODE=script-nonce node server.js
 
@@ -163,15 +173,19 @@ script-src 'nonce-random123'
 [CSP PoC] Server listening on http://localhost:3000
 ```
 
-Page includes a valid nonce script → runs.
+If the page include a valid nonce script, it will run:
 
 ![script-nonce-1a.png](images/script-nonce-1a.png)
 
-Attack attempts to inject an inline <script>alert(1)</script> → blocked.
+If an attacker attempt to inject an inline `<script>alert(1)</script>` without a valid nonce, it will be blocked:
 
 ![script-nonce-1b.png](images/script-nonce-1b.png)
 
 ## Clickjacking
+
+The `frame-ancestors 'none'` directive is used here: this prevents any other page (even same-origin) from embedding our page in an `<iframe>`. While our PoC page itself remains accessible when opened directly, if we try to iframe it from another page, the browser will block it. That protects you against clickjacking, where malicious pages could trick users into clicking disguised buttons.
+
+Start the server with CSP set:
 
 ```bash
 $ CSP_MODE=clickjacking node server.js
@@ -184,6 +198,8 @@ frame-ancestors 'none'
 ```
 
 ![clickjacking-1a.png](images/clickjacking-1a.png)
+
+Try to embed the page into another page:
 
 ```bash
 $ ls -l clickjacking-attacker.html
@@ -198,6 +214,10 @@ Serving HTTP on 0.0.0.0 port 4000 (http://0.0.0.0:4000/) ...
 ![clickjacking-1c.png](images/clickjacking-1c.png)
 
 ## XHR-Restriction
+
+This PoC shows how CSP can block unauthorized network requests. Via `connect-src 'self' https://allowed.example.com`, only specific destinations are allowed for fetch/XHR/WebSocket. In the example, trying to fetch `https://google.com` fails. This demonstrates how CSP can limit data exfiltration or communication to only trusted endpoints.
+
+Start the server with CSP set:
 
 ```bash
 $ CSP_MODE=xhr-restriction node server.js
