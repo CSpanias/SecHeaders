@@ -57,7 +57,7 @@ This configuration blocks inline JavaScript, event handlers, remote scripts, plu
 
 # PoC
 
-For this PoC we have created one server that dynamically applies different CSP headers depending on an environment variable (`CSP_MODE`). Each mode demonstrates a different use-case or attack scenario related to CSP. Below is the list with descriptions and what each mode shows:
+This set of PoCs (proof-of-concepts) demonstrates a variety of real-world misuse cases of CSP — how it can block dangerous behavior, and where it’s most helpful.
 
 | **Mode**            | **What It Demonstrates**                              | **CSP Used**                         | **Outcome**               |
 | ------------------- | ----------------------------------------------------- | ------------------------------------ | ------------------------- |
@@ -71,9 +71,11 @@ For this PoC we have created one server that dynamically applies different CSP h
 
 ## Reflected-XSS
 
-- The server reflects untrusted input directly into the HTML/JS
-- Reflected-XSS abuses the server, not the browser
-- CSP’s `script-src 'self'` blocks inline JS, so it defends the attack
+In this demo, the page takes user input from the URL query (`?q=…`) and reflects it into the page using `innerHTML`, which is vulnerable to injected HTML (e.g. `<img onerror=…>`). With the CSP set to `script-src 'self'`, the browser will block inline or injected scripts that are not from your own domain. You should observe the payload being sanitized or not running, and a CSP violation message in the console.
+
+> Reflected-XSS abuses the server, not the browser!
+
+Start the server and inspect the headers to confirm that CSP is not set:
 
 ```bash
 $ CSP_MODE=none node server.js
@@ -85,6 +87,8 @@ $ CSP_MODE=none node server.js
 ```
 
 ![reflected-xss-1a.png](images/reflected-xss-1a.png)
+
+Restart the server with the CSP set:
 
 ```bash
 $ CSP_MODE=reflected-xss node server.js
