@@ -1,11 +1,10 @@
 # **SecHeaders**
 
 SecHeaders is an educational project designed to **teach and demonstrate HTTP Security Headers** through **live, isolated Proofs of Concept (PoCs)**. Each PoC shows:
-
 * What protection the header is supposed to provide
 * What happens when the header is missing or misconfigured
 
-The project now includes a **unified Express application** that loads all PoCs dynamically and provides a clean UI where users can explore each header interactively. Each header has its own folder under `headers/`, containing:
+The project includes a **unified Express application** that loads all PoCs dynamically and provides a clean UI where users can explore each header interactively. Each header has its own folder under `headers/`, containing:
 
 * `manifest.json` (metadata used by the dashboard)
 * `index.html` (README viewer)
@@ -14,7 +13,7 @@ The project now includes a **unified Express application** that loads all PoCs d
 
 ---
 
-## ** Project Structure**
+## **Project Structure**
 
 ```
 SecHeaders/
@@ -42,7 +41,7 @@ SecHeaders/
 ```
 ---
 
-## ** Running the Unified App**
+## **Running the App**
 
 Clone and enter the project:
 
@@ -73,7 +72,7 @@ You’ll see a dashboard listing all PoCs, each with its own description and lin
 
 ---
 
-## **🧪 Running Individual PoCs (Optional)**
+## **Running Individual PoCs**
 
 Each PoC can still be run standalone if you prefer testing them directly.
 
@@ -109,6 +108,6 @@ Each PoC demonstrates real browser behavior, including:
 
 ---
 
-## ** Disclaimer**
+## **Disclaimer**
 
 This project is for **educational purposes only** and the PoCs intentionally use insecure settings — **do not run them on production systems**. Always test in controlled local or containerized environments.
