@@ -11,8 +11,6 @@ The project includes a **unified Express application** that loads all PoCs dynam
 * `README.md` (explanations, PoC notes, screenshots)
 * PoC-specific scripts (e.g., `server.js`, demo HTML files, assets)
 
----
-
 ## **Project Structure**
 
 ```
@@ -39,7 +37,6 @@ SecHeaders/
 ├── package.json
 └── README.md          ← (you are here)
 ```
----
 
 ## **Running the App**
 
@@ -70,8 +67,6 @@ http://localhost:3000
 
 You’ll see a dashboard listing all PoCs, each with its own description and link.
 
----
-
 ## **Running Individual PoCs**
 
 Each PoC can still be run standalone if you prefer testing them directly.
@@ -84,8 +79,6 @@ node server.js
 ```
 
 Then visit the URLs described in that PoC’s README.
-
----
 
 ## **PoCs Included**
 
@@ -105,8 +98,6 @@ Each PoC demonstrates real browser behavior, including:
 * HSTS caching
 * clickjacking protections
 * legacy XSS filter behaviors
-
----
 
 ## **Disclaimer**
 
