@@ -69,9 +69,7 @@ You’ll see a dashboard listing all PoCs, each with its own description and lin
 
 ## **Running Individual PoCs**
 
-Each PoC can still be run standalone if you prefer testing them directly.
-
-Example:
+Each PoC can still be run standalone if you prefer testing them directly. For example:
 
 ```bash
 cd headers/referrer-policy
@@ -79,26 +77,3 @@ node server.js
 ```
 
 Then visit the URLs described in that PoC’s README.
-
-## **PoCs Included**
-
-* **Content-Security-Policy**
-* **Content-Type**
-* **Referrer-Policy**
-* **Strict-Transport-Security**
-* **X-Content-Type-Options**
-* **X-Frame-Options**
-* **X-XSS-Protection**
-
-Each PoC demonstrates real browser behavior, including:
-
-* blocked scripts
-* MIME sniffing
-* referer leakage
-* HSTS caching
-* clickjacking protections
-* legacy XSS filter behaviors
-
-## **Disclaimer**
-
-This project is for **educational purposes only** and the PoCs intentionally use insecure settings — **do not run them on production systems**. Always test in controlled local or containerized environments.
