@@ -81,14 +81,18 @@ blockquote {
   background: #f6f8fa;
 }
 
-/* Responsive images inside markdown */
-.markdown-body img {
-  max-width: 90%;
-  max-height: 350px;
-  width: auto;
-  height: auto;
+/* Force Markdown images to scale down */
+.markdown-body img,
+.markdown-body p img {
   display: block;
   margin: 1.5rem auto;
+  
+  width: auto;
+  max-width: 90%;      /* shrink width */
+  
+  height: auto;
+  max-height: 350px;   /* shrink tall images */
+  
   object-fit: contain;
   border-radius: 6px;
 }
