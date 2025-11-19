@@ -41,7 +41,7 @@ This PoC is simple: a victim page loads `/script.js`. The server intentionally s
     ```
     
 
-![content-type-1a.png](images/content-type-1a.png)
+    ![content-type-1a.png](images/content-type-1a.png)
 
 2. Next, serve with the wrong `Content-Type`, confirm the header’s value, and reload the page. This time the browser will MIME-sniff the file’s content and execute the script regardless of the `Content-Type` value:
     
@@ -59,22 +59,22 @@ This PoC is simple: a victim page loads `/script.js`. The server intentionally s
     ```
     
 
-![content-type-1b.png](images/content-type-1b.png)
+    ![content-type-1b.png](images/content-type-1b.png)
 
 3. Finally, serve with the wrong `Content-Type` as before plus the XTCO header, confirm that everything is there, and reload the page. This time the XTCO header should enforce `Content-Type`'s value and prevent the script from executing:
 
-```bash
-$ MODE=wrong+nosniff node server.js
-Server listening: http://localhost:3000/victim.html
-MODE=wrong+nosniff  (use MODE=wrong|correct|wrong+nosniff)
+    ```bash
+    $ MODE=wrong+nosniff node server.js
+    Server listening: http://localhost:3000/victim.html
+    MODE=wrong+nosniff  (use MODE=wrong|correct|wrong+nosniff)
 
-$ curl -I http://localhost:3000/script.js
-HTTP/1.1 200 OK
-Content-Type: text/plain; charset=utf-8
-X-Content-Type-Options: nosniff
-Date: Fri, 31 Oct 2025 16:50:21 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
-```
+    $ curl -I http://localhost:3000/script.js
+    HTTP/1.1 200 OK
+    Content-Type: text/plain; charset=utf-8
+    X-Content-Type-Options: nosniff
+    Date: Fri, 31 Oct 2025 16:50:21 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
+    ```
 
-![content-type-1c.png](images/content-type-1c.png)
+    ![content-type-1c.png](images/content-type-1c.png)

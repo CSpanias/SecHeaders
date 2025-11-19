@@ -1,0 +1,144 @@
+/* =========================
+   Base styles for Markdown
+   ========================= */
+body {
+  font-family: sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 1rem; /* reduce padding for full-width look */
+  line-height: 1.6;
+}
+
+/* Full-width Markdown container */
+.markdown-body {
+  max-width: 100%;   /* full width */
+  margin: 0;         /* no centering */
+  padding: 1rem 2rem;
+  background: #fff;
+  border-radius: 0;  /* optional */
+  box-shadow: none;  /* optional */
+  font-size: 16px;
+  overflow-wrap: break-word;
+}
+
+/* =========================
+   Headings
+   ========================= */
+h1, h2, h3, h4, h5, h6 {
+  color: #222;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Paragraphs & links */
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Code blocks & inline code
+   ========================= */
+pre {
+  background-color: #f6f8fa;   /* light GitHub-style background */
+  color: #24292e;              /* dark text */
+  padding: 1rem;
+  border-radius: 6px;
+  overflow: auto;
+  margin: 1rem 0;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: pre-wrap;       /* wrap long lines */
+  word-break: break-word;      /* prevent overflow */
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+code {
+  background-color: rgba(27,31,35,0.05); /* GitHub inline code style */
+  color: #0d0c0d;                        /* accent color for inline code */
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.95em;
+}
+
+/* =========================
+   Lists
+   ========================= */
+ul, ol {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* =========================
+   Blockquotes
+   ========================= */
+blockquote {
+  border-left: 4px solid #ddd;
+  padding-left: 1rem;
+  color: #555;
+  margin: 1rem 0;
+  font-style: italic;
+  background: #f6f8fa;
+}
+
+/* =========================
+   Tables
+   ========================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+
+th {
+  background: #f6f8fa;
+}
+
+/* =========================
+   Images
+   ========================= */
+.markdown-body img {
+  display: block;
+  max-width: 100%;    /* scale down to fit container width */
+  max-height: 600px;  /* change 400px to whatever limit you want */
+  width: auto;        /* preserve aspect ratio */
+  height: auto;       /* preserve aspect ratio */
+  margin: 1rem 0;     /* top/bottom spacing */
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+/* =========================
+   Responsive adjustments
+   ========================= */
+@media (max-width: 768px) {
+  .markdown-body {
+    padding: 1rem;
+  }
+
+  pre {
+    font-size: 13px;
+    padding: 0.75rem;
+  }
+
+  th, td {
+    padding: 0.25rem 0.5rem;
+  }
+}
