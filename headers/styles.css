@@ -83,11 +83,12 @@ blockquote {
 
 /* Responsive images inside markdown */
 .markdown-body img {
-  max-width: 100%;      /* scale down to fit container */
-  max-height: 400px;    /* prevent extremely tall images */
-  height: auto;         /* maintain aspect ratio */
-  width: auto;          /* maintain aspect ratio if height is limited */
+  max-width: 90%;
+  max-height: 350px;
+  width: auto;
+  height: auto;
   display: block;
-  margin: 1rem auto;    /* center images with spacing */
-  object-fit: contain;  /* keep entire image visible */
+  margin: 1.5rem auto;
+  object-fit: contain;
+  border-radius: 6px;
 }
