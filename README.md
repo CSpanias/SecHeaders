@@ -1,43 +1,48 @@
-# SecHeaders
+# **SecHeaders**
 
-**SecHeaders** is a learning and demonstration project focused on **HTTP Security Headers** — what they are, why they matter, and how misconfiguration or absence can lead to real security risks. The goal is to provide **clear, isolated, and reproducible Proofs of Concept (PoCs)** that show:
-- The *intended protection* each header offers.
-- What happens when the header is *absent* or *misconfigured*.
-- How browsers and servers behave differently depending on the configuration.
+SecHeaders is an educational project designed to **teach and demonstrate HTTP Security Headers** through **live, isolated Proofs of Concept (PoCs)**. Each PoC shows:
 
-# Project Goals
+* What protection the header is supposed to provide
+* What happens when the header is missing or misconfigured
 
-- Build a collection of **self-contained demonstrations** for each HTTP security header.
-- Learn **modern web security practices** by implementing headers in simple web apps.
-- Gain hands-on experience with:
-  - `Node.js` and `Express` web servers
-  - `nginx` for reverse proxy and header control
-  - `Docker` for safe, reproducible testing environments
-  - `Markdown` for documentation and clear visual explanations
+The project now includes a **unified Express application** that loads all PoCs dynamically and provides a clean UI where users can explore each header interactively. Each header has its own folder under `headers/`, containing:
 
-# Current Structure
+* `manifest.json` (metadata used by the dashboard)
+* `index.html` (README viewer)
+* `README.md` (explanations, PoC notes, screenshots)
+* PoC-specific scripts (e.g., `server.js`, demo HTML files, assets)
 
-```yaml
+---
+
+## ** Project Structure**
+
+```
 SecHeaders/
 ├── headers/
-│ ├── referrer-policy/
-│ │ ├── server.js
-│ │ ├── victim.html
-│ │ ├── leak.html
-│ │ ├── images/
-│ │ └── README.md
-│ ├── (more headers to come...)
+│   ├── content-security-policy/
+│   │   ├── index.html
+│   │   ├── README.md
+│   │   ├── manifest.json
+│   │   └── (PoC files...)
+│   ├── content-type/
+│   ├── referrer-policy/
+│   ├── strict-transport-security/
+│   ├── x-content-type-options/
+│   ├── x-frame-options/
+│   ├── x-xss-protection/
+│   ├── style.css   ← shared UI styling
 │
-├── .gitignore
+├── app/
+│   ├── index.js            ← creates the unified UI
+│   ├── routerFactory.js     ← mounts each PoC dynamically
+│
+├── unified-app.js     ← main entry point
 ├── package.json
-└── README.md ← (you are here)
+└── README.md          ← (you are here)
 ```
+---
 
-Each subfolder in `headers/` contains:
-- A standalone demo app (`server.js`, HTML files)
-- Step-by-step usage guide (`README.md`)
-
-# How to Run
+## ** Running the Unified App**
 
 Clone and enter the project:
 
@@ -46,24 +51,64 @@ git clone https://github.com/CSpanias/SecHeaders.git
 cd SecHeaders
 ```
 
-Run a specific header demo (example: Referrer-Policy):
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the unified learning dashboard:
+
+```bash
+node unified-app.js
+```
+
+Then visit:
+
+```
+http://localhost:3000
+```
+
+You’ll see a dashboard listing all PoCs, each with its own description and link.
+
+---
+
+## **🧪 Running Individual PoCs (Optional)**
+
+Each PoC can still be run standalone if you prefer testing them directly.
+
+Example:
 
 ```bash
 cd headers/referrer-policy
-REFERRER=NONE node server.js
-```
-Then open your browser to:
-
-```bash
-http://localhost:3000/victim.html?secret=LEAKME
+node server.js
 ```
 
-# Planned Improvements
-- Unified Express app that integrates all PoCs into a single web interface
-- Docker Compose setup for isolated testing
-- Interactive front-end with header toggles
+Then visit the URLs described in that PoC’s README.
 
+---
 
+## **PoCs Included**
 
-# Disclaimer
-This project is for educational purposes only. The examples intentionally demonstrate insecure configurations — do not use them in production. Use these PoCs in a controlled local or containerized environment.
+* **Content-Security-Policy**
+* **Content-Type**
+* **Referrer-Policy**
+* **Strict-Transport-Security**
+* **X-Content-Type-Options**
+* **X-Frame-Options**
+* **X-XSS-Protection**
+
+Each PoC demonstrates real browser behavior, including:
+
+* blocked scripts
+* MIME sniffing
+* referer leakage
+* HSTS caching
+* clickjacking protections
+* legacy XSS filter behaviors
+
+---
+
+## ** Disclaimer**
+
+This project is for **educational purposes only** and the PoCs intentionally use insecure settings — **do not run them on production systems**. Always test in controlled local or containerized environments.
