@@ -17,7 +17,7 @@ The `Content-Type` HTTP response header tells the browser the MIME type of the r
 
 - [MDN Content-Type Header (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Type)
 - [HTTP Security Response Headers Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#content-type)
-- [File Upload Cheat Sheet ****(OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html#content-type-validation)
+- [File Upload Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html#content-type-validation)
 
 # PoC
 
