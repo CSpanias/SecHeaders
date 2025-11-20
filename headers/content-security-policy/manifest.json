@@ -1,7 +1,7 @@
 {
   "id": "csp-demo",
   "folder":"Content-Security-Policy",
-  "title": "Content-Security-Policy Demo",
+  "title": "Content-Security-Policy",
   "description": "Shows how different CSP policies restrict script execution, inline scripts, and external sources.",
   "routes": [
     {

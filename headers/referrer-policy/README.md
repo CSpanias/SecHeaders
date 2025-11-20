@@ -26,11 +26,7 @@ This leaks internal paths, user identifiers, search terms, or even session token
 
 # PoC
 
-This PoC demonstrates how, without a `Referrer-Policy`, full URLs (including query parameters) are leaked to external sites — while strict policies limit or remove that leakage.
-
-## No `Referrer-Policy` Header
-
-Start the server and confirm that the target header is not set:
+This PoC demonstrates how, without a `Referrer-Policy`, full URLs (including query parameters) are leaked to external sites — while strict policies limit or remove that leakage. Start the server and confirm that the target header is not set:
     
 ```bash
 $ REFERRER=NONE node server.js
@@ -46,8 +42,6 @@ On the cross-origin link (`example.html`) only the origin is present. This happe
     
 ![referrer-policy-1d.png](images/referrer-policy-1d.png)
     
-## Explicit `strict-origin-when-cross-origin`
-
 The same behavior is expected if the header is explicitly set to `strict-origin-when-cross-origin`: 
     
 ```bash
@@ -64,8 +58,6 @@ But not on cross-origin requests (`example.com`):
     
 ![referrer-policy-2c.png](images/referrer-policy-2c.png)
 
-## `no_referrer_when_downgrade`
-    
 Next, restart the server and set the permissive value of `no_referrer_when_downgrade`:
     
 ```bash
@@ -79,8 +71,6 @@ Both same-origin (`leak.html`) and cross-origin (`example.com`) requests leak th
 ![referrer-policy-3b.png](images/referrer-policy-3b.png)
     
 ![referrer-policy-3c.png](images/referrer-policy-3c.png)
-
-## `no-referrer`
 
 Finally, restart the server and set the header value to `no-referrer`:
 

@@ -1,7 +1,7 @@
 {
   "id": "content-type",
   "folder":"Content-Type",
-  "title": "Content-Type Header Demo",
+  "title": "Content-Type",
   "description": "Demonstrates how incorrect or misleading Content-Type values can cause script execution, MIME confusion, or misinterpreted responses.",
   "routes": [
     {

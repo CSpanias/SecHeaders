@@ -1,7 +1,7 @@
 {
   "id": "x-frame-options",
   "folder":"X-Frame-Options",
-  "title": "X-Frame-Options Clickjacking Demo",
+  "title": "X-Frame-Options",
   "description": "Illustrates how X-Frame-Options directives (DENY, SAMEORIGIN) prevent pages from being embedded within iframes, mitigating clickjacking attacks.",
   "routes": [
     {

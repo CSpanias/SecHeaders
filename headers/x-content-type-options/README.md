@@ -1,8 +1,6 @@
 # Purpose
 
-The `X-Content-Type-Options` is an HTTP response header that tells browsers to **stop MIME sniffing** and to trust the `Content-Type` header the server sends. MIME sniffing is when a browser inspects a resource’s actual bytes (its content) instead of relying solely on the server’s `Content-Type` header, then heuristically decides a more “likely” MIME type to use — for example treating a `text/plain` response that contains JavaScript-like text as `application/javascript`. That behavior was originally intended to improve compatibility with misconfigured servers, but it can be dangerous: an attacker who can make the site return attacker-controlled content (or exploit a mislabelled upload/endpoint) may trick the browser into executing script or styles, enabling XSS or other client-side attacks.
-
-The simple mitigation is to ensure correct `Content-Type` values and send `X-Content-Type-Options: nosniff`, which tells browsers to trust the declared type and not perform sniffing. This prevents browsers from guessing a resource’s type (for example turning what the server labelled `text/plain` into executable JavaScript or CSS) — reducing the risk that a resource with an incorrect or attacker-controlled MIME type will be interpreted and executed in a way that enables XSS or other attacks.
+The `X-Content-Type-Options` is an HTTP response header that tells browsers to **stop MIME sniffing** and to trust the `Content-Type` header the server sends. MIME sniffing is when a browser inspects a resource’s actual bytes (its content) instead of relying solely on the server’s `Content-Type` header, then heuristically decides a more “likely” MIME type to use — for example treating a `text/plain` response that contains JavaScript-like text as `application/javascript`. That behavior was originally intended to improve compatibility with misconfigured servers, but it can be dangerous: an attacker who can make the site return attacker-controlled content (or exploit a mislabelled upload/endpoint) may trick the browser into executing script or styles, enabling XSS or other client-side attacks. The simple mitigation is to ensure correct `Content-Type` values and send `X-Content-Type-Options: nosniff`, which tells browsers to trust the declared type and not perform sniffing. This prevents browsers from guessing a resource’s type, therefore, reducing the risk that a resource with an incorrect or attacker-controlled MIME type will be interpreted and executed in a way that enables XSS or other attacks.
 
 # Values
 
@@ -18,11 +16,7 @@ The simple mitigation is to ensure correct `Content-Type` values and send `X-Con
 
 # PoC
 
-The goal of this PoC is to show the difference between no header and `X-Content-Type-Options: nosniff` by serving a JavaScript file with an incorrect `Content-Type` and observing whether the browser executes it.
-
-## No `X-Content-Type-Options` Header
-
-Serve `script.js` as JavaScript content but intentionally set the `Content-Type: text/plain` so there is a mismatch:
+The goal of this PoC is to show the difference between no header and `X-Content-Type-Options: nosniff` by serving a JavaScript file with an incorrect `Content-Type` and observing whether the browser executes it. Serve `script.js` as JavaScript content but intentionally set the `Content-Type: text/plain` so there is a mismatch:
 
 ```bash
 $ node server.js
@@ -42,9 +36,7 @@ Visiting the page on the browser the `script.js` file will be successfully loade
 
 ![x-content-type-options-1a.png](images/x-content-type-options-1a.png)
     
-## `X-Content-Type-Options: nosniff`
-
-Start the server with the header set and confirm its presence:
+Next, start the server with the header set and confirm its presence:
 
 ```bash
 # Restart the server with the target header present

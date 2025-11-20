@@ -1,8 +1,6 @@
 # Purpose
 
-`X-XSS-Protection` is an HTTP response header originally implemented by some browsers as a **legacy, heuristic XSS filter**. When enabled, these browsers attempted to detect reflective XSS payloads in the rendered page and either sanitized or blocked the page rather than executing the injected script. It was historically useful as an extra stopgap on older browsers that lacked strong built‑in XSS protections, but **the behavior was browser‑specific and occasionally caused benign pages to break**. 
-
-Modern browsers have largely removed or deprecated this header in favour of secure coding, proper output encoding, and `Content-Security-Policy` (CSP).
+`X-XSS-Protection` is an HTTP response header originally implemented by some browsers as a **legacy, heuristic XSS filter**. When enabled, these browsers attempted to detect reflective XSS payloads in the rendered page and either sanitized or blocked the page rather than executing the injected script. It was historically useful as an extra stopgap on older browsers that lacked strong built‑in XSS protections, but **the behavior was browser‑specific and occasionally caused benign pages to break**. Modern browsers have largely removed or deprecated this header in favour of secure coding, proper output encoding, and `Content-Security-Policy` (CSP).
 
 # Values
 
@@ -14,15 +12,13 @@ Modern browsers have largely removed or deprecated this header in favour of secu
 
 # References
 
-- [HTTP Security Response Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#x-xss-protection)
-- [MDN — X-XSS-Protection header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-XSS-Protection)
-- [Defenses against XSS](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS#defenses_against_xss)
+- [HTTP Security Response Headers Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#x-xss-protection)
+- [X-XSS-Protection header (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-XSS-Protection)
+- [Defenses against XSS (MDN)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS#defenses_against_xss)
 
 # PoC
 
-This PoC demonstrates a classic reflected XSS and shows how the old `X-XSS-Protection` header is ignored by modern browsers.
-    
-1. Start the server and confirm that the header is not set:
+This PoC demonstrates a classic reflected XSS and shows how `X-XSS-Protection` is ignored by modern browsers. Start the server and confirm that the header is not set:
 
 ```bash
 $ node server.js
@@ -37,13 +33,13 @@ Connection: keep-alive
 Keep-Alive: timeout=5
 ```
 
-2. If we now pass an XSS payload into the `name` parameter it should execute:
+Next, pass an XSS payload into the `name` parameter; the payload should execute:
 
 ![x-xss-protection-1a.png](images/x-xss-protection-1a.png)
 
 ![x-xss-protection-1b.png](images/x-xss-protection-1b.png)
 
-3. Add the `X-XSS-Protection` header, confirm that it is set, and try again. In modern browsers this header would be ignored and, thus, the XSS will still be executed:
+Add the `X-XSS-Protection` header, confirm that it is set, and try again. In modern browsers this header would be ignored and, thus, the XSS will still be executed:
 
 ```bash
 $ XXSP=1 node server.js

@@ -1,12 +1,8 @@
 # Purpose
 
-`X-Frame-Options` is an HTTP response header that instructs the browser whether the page is allowed to be framed (inside `<frame>`, `<iframe>`, `<object>`, `<embed>`). It’s used primarily to mitigate **clickjacking** — where an attacker embeds your page inside a malicious page and tricks users into clicking hidden buttons or inputs. 
-
-Modern best practice is to prefer the CSP `frame-ancestors` directive because it’s more flexible and replaces `X-Frame-Options` in supporting browsers; however `X-Frame-Options` is still widely supported and still useful as a compatibility measure.
+`X-Frame-Options` is an HTTP response header that instructs the browser whether the page is allowed to be framed (inside `<frame>`, `<iframe>`, `<object>`, `<embed>`). It’s used primarily to mitigate **clickjacking** — where an attacker embeds your page inside a malicious page and tricks users into clicking hidden buttons or inputs. Modern best practice is to prefer the `Content-Security-Policy`'s `frame-ancestors` directive because it’s more flexible and replaces `X-Frame-Options` in supporting browsers. Browsers will prefer `frame-ancestors` when present; `X-Frame-Options` remains useful for older browsers that don't support CSP as a compatibility measure.
 
 # Values
-
-> CSP `frame-ancestors` is more expressive (you can list multiple origins and use `'none'`, `'self'`, or specific schemes/hosts). Browsers will prefer `frame-ancestors` when present; `X-Frame-Options` remains useful for older browsers that don't support CSP.
 
 | Values | Description |
 | --- | --- |
@@ -16,16 +12,14 @@ Modern best practice is to prefer the CSP `frame-ancestors` directive because it
 
 # References
 
-- [OWASP HTTP Headers Cheat Sheet: X-Frame-Options](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#x-frame-options)
-- [MDN X-Frame-Options Header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options)
-- [Content-Security-Policy: frame-ancestors directive](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors)
-- [OWASP Clickjacking Defense Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html)
+- [HTTP Headers Cheat Sheet: X-Frame-Options (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#x-frame-options)
+- [X-Frame-Options Header (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options)
+- [Content-Security-Policy: frame-ancestors directive (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors)
+- [Clickjacking Defense Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html)
 
 # PoC
 
-We’ll demonstrate clickjacking by hosting a simple **victim** page and a separate **attacker** page. The latter visually mimics the victim and overlays an almost‑invisible iframe to capture clicks. First we’ll show the vulnerability by loading the attacker page and using the browse to prove the victim is framed and no frame‑protection header is present. Then we’ll add frame protection on the victim, restart the victim server, and repeat the checks to show the header is sent and the browser refuses to render the frame, preventing the clickjacking.
-
-1. Serve each file on a different port:
+We’ll demonstrate clickjacking by hosting a simple **victim** page and a separate **attacker** page. The latter visually mimics the victim and overlays an almost‑invisible iframe to capture clicks. Serve each file on a different port:
 
 ```bash
 ┌──(x7331㉿CSpanias)-[~/security_headers/x-frame-options/victim]
@@ -40,7 +34,7 @@ Serving HTTP on 0.0.0.0 port 3000 (http://0.0.0.0:3000/) ...
 Serving HTTP on 0.0.0.0 port 4000 (http://0.0.0.0:4000/) ...
 ```
 
-2. Confirm the the `X-Frame-Options` header is not set:
+Confirm the the `X-Frame-Options` header is not set:
 
 ```bash
 $ curl -I http://localhost:3000/victim.html
@@ -52,19 +46,21 @@ Content-Length: 1080
 Last-Modified: Tue, 28 Oct 2025 11:14:25 GMT
 ```
 
-3. Open `victim.html` in your browser and click the *Confirm Transfer* button:
+Open `victim.html` in the browser and click the *Confirm Transfer* button:
 
 ![x-frame-options-1a.png](images/x-frame-options-1a.png)
 
 ![x-frame-options-1b.png](images/x-frame-options-1b.png)
 
-4. Open the `attack.html` in your browser and click the *Claim Prize* button. Since everything is local and no framing protection exists, the click will submit the form inside the framed victim page and you’ll see the pop up demonstrating clickjacking. This can be also confirmed by the HTTP response:
+Open the `attack.html` in your browser and click the *Claim Prize* button. Since everything is local and no framing protection exists, the click will submit the form inside the framed victim page and you’ll see the pop up demonstrating clickjacking:
 
 ![x-frame-options-1c.png](images/x-frame-options-1c.png)
 
+This can be also confirmed by the HTTP response:
+
 ![x-frame-options-1d.png](images/x-frame-options-1d.png)
 
-5. Now add protection to the app by stopping the Python HTTP server running on port `3000` and start the node server:
+Now add protection to the app by stopping the Python HTTP server running on port `3000` and starting the node server:
 
 ```jsx
 $ npm init -y && npm install express
@@ -72,7 +68,7 @@ $ node server.js
 Victim server: http://localhost:3000/victim.html
 ```
 
-6. Confirm that the `X-Frame-Options` header is set and try loading the `attacker.html` page again:
+Confirm that the `X-Frame-Options` header is set and try loading the `attacker.html` page again:
 
 ```bash
 $ curl -I http://localhost:3000/victim.html

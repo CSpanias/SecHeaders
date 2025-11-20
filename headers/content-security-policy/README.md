@@ -1,10 +1,6 @@
 # Purpose
 
-The `Content-Security-Policy` (CSP) HTTP response header allows a website to define **which sources of content the browser is allowed to load or execute**. It is one of the most powerful browser-side security controls available and is primarily designed to **mitigate JavaScript (JS) injection attacks**.
-
-Browsers normally load resources such as scripts, images, stylesheets, iframes, fonts, AJAX requests, and media from any origin the page references. If an attacker manages to inject HTML or JS into a vulnerable page, the browser will execute it unless additional protections exist. CSP changes this by enforcing a **strict allowlist model**: the server declares what sources are trusted (e.g., `'self'`, a specific CDN, or a nonce-based inline script), and **everything else is blocked by default**. With a well-designed CSP, even successful HTML injection does *not* lead to script execution, because the malicious inline `<script>` or `<img onerror=...>` fails CSP validation.
-
-CSP effectively replaces several legacy security headers:
+The `Content-Security-Policy` (CSP) HTTP response header allows a website to define **which sources of content the browser is allowed to load or execute**. It is one of the most powerful browser-side security controls available and is primarily designed to **mitigate JavaScript (JS) injection attacks**. Browsers normally load resources such as scripts, images, stylesheets, etc from any origin the page references. If an attacker manages to inject HTML or JS into a vulnerable page, the browser will execute it unless additional protections exist. CSP changes this by enforcing a **strict allowlist model**: the server declares what sources are trusted (e.g., `'self'`, a specific CDN, or a nonce-based inline script), and **everything else is blocked by default**. With a well-designed CSP, even successful HTML injection does not lead to script execution, because the malicious inline `<script>` or `<img onerror=...>` fails CSP validation. CSP effectively replaces several legacy security headers:
 - The most important example is `X-Frame-Options`, which is deprecated and fully replaced by the CSP directive `frame-ancestors`, giving finer control over which origins may embed a page.
 - The old `X-XSS-Protection` header is also deprecated (and disabled in Chrome/Edge) because CSP offers significantly stronger XSS protection through `script-src` restrictions, nonces, and blocking inline scripts. CSP can also take over the role of `<base>` restrictions and some URL sanitization patterns through `navigate-to`.
 
@@ -41,19 +37,17 @@ Useful keywords:
 | `'nonce-<value>'` | Allows inline scripts with a server-generated nonce attribute |
 | `'strict-dynamic'` | Allows dynamically inserted scripts *only if* they originate from trusted scripts |
 
-A simple but effective CSP example:
+An example CSP header which blocks inline JavaScript, event handlers, remote scripts, plugin content, and most common XSS payloads:
 
 ```
 Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none';
 ```
 
-This configuration blocks inline JavaScript, event handlers, remote scripts, plugin content, and most common XSS payloads.
-
 # References
 
 - [Content-Security-Policy (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 - [CSP Cheat Sheet (OWASP)](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html)
-- [Google CSP Evaluator](https://csp-evaluator.withgoogle.com/)
+- [CSP Evaluator (Google)](https://csp-evaluator.withgoogle.com/)
 
 # PoCs
 
